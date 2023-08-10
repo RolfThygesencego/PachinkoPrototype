@@ -28,7 +28,13 @@ public class ObstacleManager : MonoBehaviour
     private float currentObstacleTime = 0;
     [SerializeField]
     private float minObDistance = 1f;
+    [SerializeField]
+    private float maxObDistance = 2f;
+    private int totalObstacles;
 
+    public GameObject obstacle;
+    public GameObject originStart;
+    private GameObject prevObstacle;
 
     void Start()
     {
@@ -49,10 +55,25 @@ public class ObstacleManager : MonoBehaviour
         if (spinningReel.controlsObstacles)
         {
             Spinning = spinningReel.spinning;
-            SpinningSpeed = spinningReel.SpinningSpeed;
+            if (!spinningReel.rightDirection)
+                SpinningSpeed = spinningReel.SpinningSpeed;
+            else if (spinningReel.rightDirection)
+                SpinningSpeed = 0 - spinningReel.SpinningSpeed;
             MaxObstacles = spinningReel.MaxObstacles;
             obstacleTimer = spinningReel.ObstacleTimer;
             minObDistance = spinningReel.minObDistance;
+            maxObDistance = spinningReel.maxObDistance;
+            totalObstacles = spinningReel.TotalObstacles;
+            if (obstacles.Count < totalObstacles)
+            {
+                GameObject ob = Instantiate(obstacle);
+                ob.transform.SetParent(transform, false);
+                ob.SetActive(false);
+                Instantiate(ob);
+                obstacles.Add(ob);
+                inactiveObstacles.Add(ob);
+            }
+
         }
         ChangeColor();
         Spin();
@@ -77,14 +98,37 @@ public class ObstacleManager : MonoBehaviour
             {
                 if (obstacle.activeSelf)
                     obstacle.transform.position = new Vector2(obstacle.transform.position.x - SpinningSpeed / 10, obstacle.transform.position.y);
+                if (!spinningReel.rightDirection)
+                    if (obstacle.transform.position.x < -10 && obstacle.activeSelf)
+                    {
+                        if (inactiveObstacles.Contains(obstacle))
+                            break;
 
-                if (obstacle.transform.position.x < -10 && obstacle.activeSelf)
+                        if (obstacles.Count > totalObstacles)
+                        {
+                            obstacles.Remove(obstacle);
+                            Destroy(obstacle.gameObject);
+                            return;
+                        }
+                        obstacle.SetActive(false);
+                        inactiveObstacles.Add(obstacle);
+                    }
+                if (spinningReel.rightDirection)
                 {
-                    if (inactiveObstacles.Contains(obstacle))
-                        break;
+                    if (obstacle.transform.position.x > 10 && obstacle.activeSelf)
+                    {
+                        if (inactiveObstacles.Contains(obstacle))
+                            break;
 
-                    obstacle.SetActive(false);
-                    inactiveObstacles.Add(obstacle);
+                        if (obstacles.Count > totalObstacles)
+                        {
+                            obstacles.Remove(obstacle);
+                            Destroy(obstacle);
+                            return;
+                        }
+                        obstacle.SetActive(false);
+                        inactiveObstacles.Add(obstacle);
+                    }
                 }
             }
         }
@@ -95,18 +139,15 @@ public class ObstacleManager : MonoBehaviour
         {
             int obindex = Random.Range(0, getInactiveObstacles());
             GameObject obs = inactiveObstacles[obindex];
-            obs.transform.position = new Vector2(Random.Range(12.34f + (float)getReadyObstacles() / 3, 14.34f + (float)getReadyObstacles() / 3),
-                                                 Random.Range(-1.2f, 1.2f));
-
+            
             inactiveObstacles.Remove(obs);
-
             if (!readyObstacles.Contains(obs))
                 readyObstacles.Add(obs);
-
         }
     }
     void ReactivateObstacles()
     {
+        if (Spinning)
         currentObstacleTime -= 0.01f;
         if (currentObstacleTime < 0 && getReadyObstacles() > 0)
         {
@@ -115,17 +156,28 @@ public class ObstacleManager : MonoBehaviour
                 return;
             }
             var obs = readyObstacles[0];
-            
+
 
             if (DetermineDistance(obs))
             {
+                prevObstacle = obs;
+                Vector2 vect = new Vector2();
+                if (!spinningReel.rightDirection)
+                {
+                    vect = new Vector2(Random.Range(originStart.transform.localPosition.x, originStart.transform.localPosition.x + maxObDistance), Random.Range(0.6f, -0.6f));
+                }
+                else
+                {
+                    vect = new Vector2(Random.Range(originStart.transform.localPosition.x, originStart.transform.localPosition.x - maxObDistance), Random.Range(0.6f, -0.6f));
+                }
+                obs.transform.localPosition = vect;
                 obs.SetActive(true);
                 readyObstacles.Remove(obs);
                 currentObstacleTime = obstacleTimer;
             }
             else if (!inactiveObstacles.Contains(obs))
                 inactiveObstacles.Add(obs);
-                
+
         }
     }
     private int getInactiveObstacles()
@@ -170,18 +222,12 @@ public class ObstacleManager : MonoBehaviour
 
     private bool DetermineDistance(GameObject obs)
     {
-        if (getReadyObstacles() >= 1)
-            if (readyObstacles[getReadyObstacles() - 1] != null)
-            {
-                if (Vector2.Distance(obs.transform.position, readyObstacles[getReadyObstacles() - 1].transform.position) < minObDistance)
-                    return false;
-            }
-        if (getReadyObstacles() >= 2)
-            if (readyObstacles[getReadyObstacles() - 2] != null)
-            {
-                if (Vector2.Distance(obs.transform.position, readyObstacles[getReadyObstacles() - 2].transform.position) < minObDistance)
-                    return false;
-            }
+        if (prevObstacle != null)
+        {
+            if (Mathf.Abs(obs.transform.position.x - originStart.transform.position.x) < minObDistance)
+                return false;
+        }
         return true;
     }
+
 }
