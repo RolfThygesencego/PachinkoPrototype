@@ -9,12 +9,9 @@ public class ObstacleManager : MonoBehaviour
 {
     private SpinningReel spinningReel;
     public Camera Camera;
-    [SerializeField]
-    private List<GameObject> obstacles = new List<GameObject>();
-    [SerializeField]
-    private List<GameObject> inactiveObstacles = new List<GameObject>();
-    [SerializeField]
-    private List<GameObject> readyObstacles = new List<GameObject>();
+    public List<GameObject> obstacles = new List<GameObject>();
+    public List<GameObject> inactiveObstacles = new List<GameObject>();
+    public List<GameObject> readyObstacles = new List<GameObject>();
     [SerializeField]
     Color obstacleColor = Color.black;
     [SerializeField]
@@ -25,6 +22,8 @@ public class ObstacleManager : MonoBehaviour
     private int MaxObstacles = 8;
     [SerializeField]
     private float obstacleTimer = 0.2f;
+    [SerializeField]
+    private float maxObstacleTimer = 0.3f;
     private float currentObstacleTime = 0;
     [SerializeField]
     private float minObDistance = 1f;
@@ -34,12 +33,25 @@ public class ObstacleManager : MonoBehaviour
 
     public GameObject obstacle;
     public GameObject originStart;
+    public GameObject circleExtraBall;
+    public int ExtraBallPowerups = 10;
     private GameObject prevObstacle;
+    private float lastObDistance = 0;
 
     void Start()
     {
         spinningReel = GetComponentInParent<SpinningReel>();
         int totalObstacles = gameObject.transform.childCount;
+        for (int i = 0; i < ExtraBallPowerups; i++)
+        {
+            GameObject ob = Instantiate(circleExtraBall);
+            ob.transform.SetParent(transform, false);
+            ob.SetActive(false);
+            Instantiate(ob);
+            obstacles.Add(ob);
+            inactiveObstacles.Add(ob);
+            totalObstacles -= 1;
+        }
         for (int i = 0; i < totalObstacles; i++)
         {
             var currentObstacle = transform.GetChild(i);
@@ -61,6 +73,7 @@ public class ObstacleManager : MonoBehaviour
                 SpinningSpeed = 0 - spinningReel.SpinningSpeed;
             MaxObstacles = spinningReel.MaxObstacles;
             obstacleTimer = spinningReel.ObstacleTimer;
+            maxObstacleTimer = spinningReel.maxObstacleTimer;
             minObDistance = spinningReel.minObDistance;
             maxObDistance = spinningReel.maxObDistance;
             totalObstacles = spinningReel.TotalObstacles;
@@ -75,7 +88,7 @@ public class ObstacleManager : MonoBehaviour
             }
 
         }
-        ChangeColor();
+        //ChangeColor();
         Spin();
         ReorderInactiveObstacles();
         ReactivateObstacles();
@@ -139,7 +152,7 @@ public class ObstacleManager : MonoBehaviour
         {
             int obindex = Random.Range(0, getInactiveObstacles());
             GameObject obs = inactiveObstacles[obindex];
-            
+
             inactiveObstacles.Remove(obs);
             if (!readyObstacles.Contains(obs))
                 readyObstacles.Add(obs);
@@ -148,7 +161,7 @@ public class ObstacleManager : MonoBehaviour
     void ReactivateObstacles()
     {
         if (Spinning)
-        currentObstacleTime -= 0.01f;
+            currentObstacleTime -= 0.1f;
         if (currentObstacleTime < 0 && getReadyObstacles() > 0)
         {
             if (readyObstacles[0] == null)
@@ -157,26 +170,34 @@ public class ObstacleManager : MonoBehaviour
             }
             var obs = readyObstacles[0];
 
-
-            if (DetermineDistance(obs))
+            if (DetermineDistance(prevObstacle, lastObDistance) || prevObstacle == null)
             {
                 prevObstacle = obs;
                 Vector2 vect = new Vector2();
                 if (!spinningReel.rightDirection)
                 {
-                    vect = new Vector2(Random.Range(originStart.transform.localPosition.x, originStart.transform.localPosition.x + maxObDistance), Random.Range(0.6f, -0.6f));
+                    float randX = Random.Range(minObDistance, maxObDistance);
+                    vect = new Vector2(originStart.transform.position.x + randX, Random.Range(0.6f, -0.6f));
+                    lastObDistance = randX;
                 }
                 else
                 {
-                    vect = new Vector2(Random.Range(originStart.transform.localPosition.x, originStart.transform.localPosition.x - maxObDistance), Random.Range(0.6f, -0.6f));
+                    float randX = Random.Range(minObDistance, maxObDistance);
+                    vect = new Vector2(originStart.transform.position.x - randX, Random.Range(0.6f, -0.6f));
+                    lastObDistance = randX;
                 }
                 obs.transform.localPosition = vect;
                 obs.SetActive(true);
                 readyObstacles.Remove(obs);
+                float newTimer = Random.Range(obstacleTimer, maxObstacleTimer);
                 currentObstacleTime = obstacleTimer;
             }
             else if (!inactiveObstacles.Contains(obs))
+            {
                 inactiveObstacles.Add(obs);
+                readyObstacles.Remove(obs);
+            }
+                
 
         }
     }
@@ -220,14 +241,24 @@ public class ObstacleManager : MonoBehaviour
         }
     }
 
-    private bool DetermineDistance(GameObject obs)
+    private bool DetermineDistance(GameObject obs, float lastX)
     {
         if (prevObstacle != null)
         {
-            if (Mathf.Abs(obs.transform.position.x - originStart.transform.position.x) < minObDistance)
-                return false;
+
+                if (Mathf.Abs(obs.transform.position.x - originStart.transform.position.x) < lastX)
+                    return false;
         }
         return true;
+    }
+    public void RefreshUpgrades()
+    {
+        foreach (GameObject ob in obstacles)
+        {
+            CircleObstacle co = ob.GetComponent<CircleObstacle>();
+            co.UpgradeSpent = false;
+            ob.GetComponent<SpriteRenderer>().color = co.originalColor;
+        }
     }
 
 }

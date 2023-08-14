@@ -10,33 +10,23 @@ public class SpinningReel : MonoBehaviour
     public int TotalObstacles = 15;
     public int MaxObstacles = 12;
     public float ObstacleTimer = 0.2f;
+    public float maxObstacleTimer = 0.3f;
     public float minObDistance = 1f;
     public float maxObDistance = 2;
     public bool controlsObstacles = true;
     public bool rightDirection = false;
-    public GameObject ball;
     public float maxSpinTime = 30f;
     public float currentSpinTime = 0;
-    public bool ballSpawner = false;
-    public List<GameObject> balls = new List<GameObject>();
+    public bool spinFinished = false;
+
     public void StartSpinning()
     {
-        if (ballSpawner)
-        {
-            foreach (var ball in balls)
-            {
-                Destroy(ball);
-            }
-            balls.Clear();
-            for (int i = 0; i < 3; i++)
-            {
-                GameObject go = Instantiate(ball);
-                balls.Add(go);
-                go.transform.position = new Vector2(-3 + (i * 3), 8.37f);
-            }
-        }   
         if (!spinning)
+        {
+            spinFinished = false;
             spinning = true;
+        }
+            
     }
 
     public void SpinningTime()
@@ -49,24 +39,24 @@ public class SpinningReel : MonoBehaviour
             {
                 spinning = false;
                 currentSpinTime = 0;
-                if (ballSpawner)
-                {
-                    foreach (GameObject obj in balls)
-                    {
-                        obj.GetComponent<Rigidbody2D>().simulated = true;
-                    }
-                }    
+                GameManager.Instance.reelFinished.Invoke();
+                  
             }
         }
     }
 
     private void Update()
     {
+       // MaxMoreThanMinDistance();
+        SpinningTime();
+    }
+
+    void MaxMoreThanMinDistance()
+    {
         if (maxObDistance - minObDistance < 0.5f)
         {
             maxObDistance = minObDistance;
             maxObDistance += 0.5f;
         }
-        SpinningTime();
     }
 }
