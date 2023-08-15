@@ -545,8 +545,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2313972688129236800}
-  - component: {fileID: 358582010492708114}
   - component: {fileID: 1590733145465253887}
+  - component: {fileID: 4715738022665796446}
   m_Layer: 0
   m_Name: Goal
   m_TagString: Untagged
@@ -572,20 +572,6 @@ Transform:
   - {fileID: 6306048027731519804}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &358582010492708114
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7088087494890853307}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec81947592d9e6a489af06c7f8c00c76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreText: {fileID: 4126906621285386092}
-  Score: 0
 --- !u!61 &1590733145465253887
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -618,7 +604,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.27192378}
+  m_Offset: {x: 0, y: 0.12539452}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -629,8 +615,23 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1.8215568}
+  m_Size: {x: 1, y: 2.6161938}
   m_EdgeRadius: 0
+--- !u!114 &4715738022665796446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7088087494890853307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec81947592d9e6a489af06c7f8c00c76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 4126906621285386092}
+  Score: 0
+  BaseScore: 0
 --- !u!1 &8112793795721742154
 GameObject:
   m_ObjectHideFlags: 0

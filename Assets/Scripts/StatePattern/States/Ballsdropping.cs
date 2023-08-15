@@ -13,7 +13,7 @@ public class Ballsdropping : State
     public List<Ball> readyBalls = new List<Ball>();
     public override void End()
     {
-
+        ballsToBeAdded = 0;
     }
 
     public override void Execute()
@@ -28,7 +28,7 @@ public class Ballsdropping : State
 
     public override void Initialize()
     {
-        ballsToBeAdded = 1;
+        
         ballsFinished = 0;
         ballTimer = 0.5f;
         DropBalls();
@@ -39,7 +39,7 @@ public class Ballsdropping : State
         {
             obj.GetComponent<Rigidbody2D>().simulated = true;
 
-            obj.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-200, 200), 0));
+            obj.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-300, 300), 0));
         }
     }
 

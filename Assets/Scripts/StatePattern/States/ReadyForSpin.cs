@@ -18,7 +18,8 @@ public class ReadyForSpin : State
 
     public override void Initialize()
     {
-
+        GameManager.Instance.Spinning.ballWager = 1;
+        GameManager.Instance.Ballsdropping.ballsToBeAdded = 0;
     }
     public void DropBalls()
     {

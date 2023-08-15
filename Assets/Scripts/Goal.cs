@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class Goal : MonoBehaviour
@@ -30,8 +31,8 @@ public class Goal : MonoBehaviour
                 Score += (Score / 10);
                 ball.ballScoreAdded = true;
             }
-
-
+//work please
+//be nice
         }
     }
 }

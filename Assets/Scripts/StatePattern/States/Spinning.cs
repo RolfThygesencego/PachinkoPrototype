@@ -11,6 +11,7 @@ public class Spinning : State
     UnityEvent ballfinish = new UnityEvent();
     public int finishedBalls = 0;
     public int finishedReels = 0;
+    public int ballWager = 1;
     public override void End()
     {
         
@@ -35,7 +36,7 @@ public class Spinning : State
                 reel.GetComponentInChildren<ObstacleManager>().RefreshUpgrades();
             }
             GameManager.Instance.balls.Clear();
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < ballWager; i++)
             {
                 GameManager.Instance.Ballsdropping.ballsToBeAdded++;
             }

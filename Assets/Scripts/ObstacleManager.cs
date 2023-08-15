@@ -34,9 +34,14 @@ public class ObstacleManager : MonoBehaviour
     public GameObject obstacle;
     public GameObject originStart;
     public GameObject circleExtraBall;
+    public GameObject circleAddToScore;
+    public GameObject circleBounceHigh;
     public int ExtraBallPowerups = 10;
+    public int AddToScorePowerups = 5;
+    public int BounceHighPowerups = 5;
     private GameObject prevObstacle;
     private float lastObDistance = 0;
+   
 
     void Start()
     {
@@ -45,6 +50,26 @@ public class ObstacleManager : MonoBehaviour
         for (int i = 0; i < ExtraBallPowerups; i++)
         {
             GameObject ob = Instantiate(circleExtraBall);
+            ob.transform.SetParent(transform, false);
+            ob.SetActive(false);
+            Instantiate(ob);
+            obstacles.Add(ob);
+            inactiveObstacles.Add(ob);
+            totalObstacles -= 1;
+        }
+        for (int j = 0; j < AddToScorePowerups; j++)
+        {
+            GameObject ob = Instantiate(circleAddToScore);
+            ob.transform.SetParent(transform, false);
+            ob.SetActive(false);
+            Instantiate(ob);
+            obstacles.Add(ob);
+            inactiveObstacles.Add(ob);
+            totalObstacles -= 1;
+        }
+        for (int j = 0; j < BounceHighPowerups; j++)
+        {
+            GameObject ob = Instantiate(circleBounceHigh);
             ob.transform.SetParent(transform, false);
             ob.SetActive(false);
             Instantiate(ob);
@@ -255,6 +280,7 @@ public class ObstacleManager : MonoBehaviour
     {
         foreach (GameObject ob in obstacles)
         {
+            ob.GetComponent<Rigidbody2D>().simulated = true;
             CircleObstacle co = ob.GetComponent<CircleObstacle>();
             co.UpgradeSpent = false;
             ob.GetComponent<SpriteRenderer>().color = co.originalColor;

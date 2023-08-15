@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public Ball ball;
     public List<Ball> balls = new List<Ball>();
-    
+
     public List<SpinningReel> Reels = new List<SpinningReel>();
     public List<Goal> Goals = new List<Goal>();
     public UnityEvent reelFinished = new UnityEvent();
@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public Spinning Spinning = new Spinning();
     public ReadyForSpin ReadyForSpin = new ReadyForSpin();
     public TextMeshProUGUI scoreTally;
+    public TextMeshProUGUI BallTally;
     private int Score;
     State CurrentState;
 
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour
         //Debug.Log(CurrentState.ToString());
         CurrentState.Execute();
         scoreTally.text = $"{Score}";
+        DisplayBalls();
 
     }
 
@@ -56,7 +58,7 @@ public class GameManager : MonoBehaviour
         if (CurrentState == ReadyForSpin)
         {
             ChangeState(Spinning);
-            Score -= 100;
+            Score -= 100 * Spinning.ballWager;
         }
     }
 
@@ -72,5 +74,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+    public void UpgradeAddToScore()
+    {
+        foreach (Goal goal in Goals)
+        {
+            goal.Score += goal.Score / 10;
+        }
+    }
+
+    public void DisplayBalls()
+    {
+        BallTally.text = $"Balls {Spinning.ballWager}";
+    }
+
+    public void IncreaseWager()
+    {
+        if (Spinning.ballWager < 3 && CurrentState == ReadyForSpin)
+            Spinning.ballWager++;
+    }
+    public void DecreaseWager()
+    {
+        if (Spinning.ballWager > 1 && CurrentState == ReadyForSpin)
+            Spinning.ballWager--;
+    }
 }
