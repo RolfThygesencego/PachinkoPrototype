@@ -9,11 +9,13 @@ public class Ballsdropping : State
     public int ballsFinished = 0;
     public int ballsToBeAdded = 0;
     public float ballTimer = 3f;
-    public float ballTimerMax = 20f;
+    public float ballTimerMax = 5f;
     public List<Ball> readyBalls = new List<Ball>();
+    public int[] goalScores = new int[9];
     public override void End()
     {
         ballsToBeAdded = 0;
+        saveData();
     }
 
     public override void Execute()
@@ -64,6 +66,26 @@ public class Ballsdropping : State
             readyBalls.RemoveAt(0);
 
         }
+
+    }
+
+    void saveData()
+    {
+        int prevSpins = GameManager.Instance.CSVWriter.LoadCVSTimesSPun();
+        int prevBalls = GameManager.Instance.CSVWriter.LoadCVSBallsPerSpin();
+        if (prevSpins < 0) 
+        {
+            prevSpins = 0;
+        }
+        int[] goalIndex = GameManager.Instance.CSVWriter.loadCVSGoalsScored();
+        for (int i = 0; i < 9; i++)
+        {
+            goalScores[i] = (goalIndex[i] + GameManager.Instance.Goals[i].timesScored);
+        }
+
+        GameManager.Instance.CSVWriter.WriteCSVSaveGoals(goalScores[0], goalScores[1], goalScores[2], goalScores[3], goalScores[4], goalScores[5], goalScores[6], goalScores[7], goalScores[8], prevSpins+1, prevBalls + ballsFinished);
+
+        
 
     }
 }

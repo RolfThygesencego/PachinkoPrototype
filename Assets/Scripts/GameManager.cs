@@ -18,7 +18,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreTally;
     public TextMeshProUGUI BallTally;
     private int Score;
-    State CurrentState;
+    
+    public State CurrentState;
+    public CSVWriter CSVWriter = new CSVWriter();
 
     public void Awake()
     {
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
         }
         reelFinished.AddListener(Spinning.reelFinishedSpinning);
         CurrentState = ReadyForSpin;
+        CSVWriter.CreateCVSGoals();
     }
 
     public void ChangeState(State nextState)
@@ -89,12 +92,12 @@ public class GameManager : MonoBehaviour
 
     public void IncreaseWager()
     {
-        if (Spinning.ballWager < 3 && CurrentState == ReadyForSpin)
-            Spinning.ballWager++;
+        if (Spinning.ballWager < 100 && CurrentState == ReadyForSpin)
+            Spinning.ballWager += 5;
     }
     public void DecreaseWager()
     {
         if (Spinning.ballWager > 1 && CurrentState == ReadyForSpin)
-            Spinning.ballWager--;
+            Spinning.ballWager -= 5;
     }
 }

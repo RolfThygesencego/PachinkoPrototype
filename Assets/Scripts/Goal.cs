@@ -9,6 +9,8 @@ public class Goal : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public int Score;
     public int BaseScore;
+
+    public int timesScored;
     private void Awake()
     {
         BaseScore = Score;
@@ -30,7 +32,10 @@ public class Goal : MonoBehaviour
                 GameManager.Instance.AddToScore(Score);
                 Score += (Score / 10);
                 ball.ballScoreAdded = true;
+                timesScored++;
+                
             }
+
 //work please
 //be nice
         }

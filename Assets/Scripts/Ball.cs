@@ -5,11 +5,9 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     public bool ballScoreAdded = false;
-    public void BallFinishedNotification()
+    public void Awake()
     {
         
-
-
     }
 
 

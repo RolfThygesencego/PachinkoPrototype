@@ -19,13 +19,11 @@ public class BallCollissionBox : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
+            if (collision.GetComponent<Ball>().ballScoreAdded)
+            {
+                collision.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+            }
             
-            
-            
-
-
-            
-
         }
     }
     // Update is called once per frame
