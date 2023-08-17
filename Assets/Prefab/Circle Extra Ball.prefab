@@ -158,8 +158,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4033808132218250329}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79cf4af7edd04ce428e6034865114951, type: 3}
+  m_Script: {fileID: 11500000, guid: 8136db4574d7e6e41b5ee44872c167f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UpgradeSpent: 0
   BallContact: 3
+  originalColor: {r: 0, g: 0, b: 0, a: 0}
+  pObstacleManager: {fileID: 0}

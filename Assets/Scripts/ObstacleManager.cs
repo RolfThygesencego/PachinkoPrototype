@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -12,6 +13,8 @@ public class ObstacleManager : MonoBehaviour
     public List<GameObject> obstacles = new List<GameObject>();
     public List<GameObject> inactiveObstacles = new List<GameObject>();
     public List<GameObject> readyObstacles = new List<GameObject>();
+    public List<GameObject> availableUpgrades = new List<GameObject>();
+    public List<GameObject> tempUpgrades = new List<GameObject>();
     [SerializeField]
     Color obstacleColor = Color.black;
     [SerializeField]
@@ -45,6 +48,7 @@ public class ObstacleManager : MonoBehaviour
 
     void Start()
     {
+        AddAvailableUpgrades();
         spinningReel = GetComponentInParent<SpinningReel>();
         int totalObstacles = gameObject.transform.childCount;
         for (int i = 0; i < ExtraBallPowerups; i++)
@@ -56,6 +60,7 @@ public class ObstacleManager : MonoBehaviour
             obstacles.Add(ob);
             inactiveObstacles.Add(ob);
             totalObstacles -= 1;
+            ob.GetComponent<CircleObstacle>().pObstacleManager = this;
         }
         for (int j = 0; j < AddToScorePowerups; j++)
         {
@@ -66,6 +71,7 @@ public class ObstacleManager : MonoBehaviour
             obstacles.Add(ob);
             inactiveObstacles.Add(ob);
             totalObstacles -= 1;
+            ob.GetComponent<CircleObstacle>().pObstacleManager = this;
         }
         for (int j = 0; j < BounceHighPowerups; j++)
         {
@@ -76,11 +82,13 @@ public class ObstacleManager : MonoBehaviour
             obstacles.Add(ob);
             inactiveObstacles.Add(ob);
             totalObstacles -= 1;
+            ob.GetComponent<CircleObstacle>().pObstacleManager = this;
         }
         for (int i = 0; i < totalObstacles; i++)
         {
             var currentObstacle = transform.GetChild(i);
             obstacles.Add(currentObstacle.gameObject);
+            currentObstacle.GetComponent<CircleObstacle>().pObstacleManager = this;
         }
 
 
@@ -110,6 +118,7 @@ public class ObstacleManager : MonoBehaviour
                 Instantiate(ob);
                 obstacles.Add(ob);
                 inactiveObstacles.Add(ob);
+                //bruh
             }
 
         }
@@ -137,7 +146,7 @@ public class ObstacleManager : MonoBehaviour
                 if (obstacle.activeSelf)
                     obstacle.transform.position = new Vector2(obstacle.transform.position.x - SpinningSpeed / 10, obstacle.transform.position.y);
                 if (!spinningReel.rightDirection)
-                    if (obstacle.transform.position.x < -10 && obstacle.activeSelf)
+                    if (obstacle.transform.position.x < -7.9 && obstacle.activeSelf)
                     {
                         if (inactiveObstacles.Contains(obstacle))
                             break;
@@ -153,7 +162,7 @@ public class ObstacleManager : MonoBehaviour
                     }
                 if (spinningReel.rightDirection)
                 {
-                    if (obstacle.transform.position.x > 10 && obstacle.activeSelf)
+                    if (obstacle.transform.position.x > 7.9 && obstacle.activeSelf)
                     {
                         if (inactiveObstacles.Contains(obstacle))
                             break;
@@ -287,4 +296,30 @@ public class ObstacleManager : MonoBehaviour
         }
     }
 
+    public void ChangeObstacleToSpecial()
+    {
+
+
+        GameObject oldObst = obstacles.Find(ob => ob.GetComponent<CircleObstacle>() && ob.activeSelf);
+
+      
+        Vector2 obstpos = oldObst.gameObject.transform.position;
+        obstacles.Remove(oldObst);
+        Destroy(oldObst);
+
+        GameObject newObs = Instantiate(availableUpgrades[Random.Range(0, availableUpgrades.Count)]);
+        newObs.transform.position = obstpos;
+        obstacles.Add(newObs);
+        tempUpgrades.Add(newObs);
+    }
+    public void AddAvailableUpgrades()
+    {
+        availableUpgrades.Add(circleAddToScore);
+        availableUpgrades.Add(circleAddToScore);
+        availableUpgrades.Add(circleAddToScore);
+        availableUpgrades.Add(circleAddToScore);
+        availableUpgrades.Add(circleBounceHigh);
+        availableUpgrades.Add(circleBounceHigh);
+        availableUpgrades.Add(circleExtraBall);
+    }
 }

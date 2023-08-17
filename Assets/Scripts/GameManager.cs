@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
+public enum GMode { STANDARD, TEN_BALL }
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -18,12 +20,17 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreTally;
     public TextMeshProUGUI BallTally;
     private int Score;
-    
+
     public State CurrentState;
     public CSVWriter CSVWriter = new CSVWriter();
+    public GameMode CurrentGameMode;
+    public GMode gmode;
+    public int ballWagerAmount;
+    public int ballsStandardAmount;
 
     public void Awake()
     {
+
         Score = 100;
         if (Instance != null && Instance != this)
         {
@@ -33,8 +40,9 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
         }
+        ChangeRules(CurrentGameMode);
+        ChangeState(ReadyForSpin);
         reelFinished.AddListener(Spinning.reelFinishedSpinning);
-        CurrentState = ReadyForSpin;
         CSVWriter.CreateCVSGoals();
     }
 
@@ -93,11 +101,21 @@ public class GameManager : MonoBehaviour
     public void IncreaseWager()
     {
         if (Spinning.ballWager < 100 && CurrentState == ReadyForSpin)
-            Spinning.ballWager += 5;
+            Spinning.ballWager += ballWagerAmount;
     }
     public void DecreaseWager()
     {
         if (Spinning.ballWager > 1 && CurrentState == ReadyForSpin)
-            Spinning.ballWager -= 5;
+            Spinning.ballWager -= ballWagerAmount;
+    }
+
+    void ChangeRules(GameMode gameMode)
+    {
+        gmode = gameMode.gMode;
+        ball.GetComponent<Rigidbody2D>().sharedMaterial.bounciness = gameMode.ballBounciness;
+        ball.GetComponent<Rigidbody2D>().gravityScale = gameMode.ballGravityScale;
+        ballWagerAmount = gameMode.ballWager;
+        ballsStandardAmount = gameMode.standardBallsAmount;
+
     }
 }

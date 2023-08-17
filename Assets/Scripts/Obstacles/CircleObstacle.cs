@@ -8,10 +8,12 @@ public class CircleObstacle : MonoBehaviour
     public bool UpgradeSpent = false;
     public float BallContact = 3f;
     public Color originalColor;
+    public ObstacleManager pObstacleManager;
 
     public void Awake()
     {
         originalColor = GetComponent<SpriteRenderer>().color;
+
     }
     public virtual void OnCollisionStay2D(UnityEngine.Collision2D collision)
     {

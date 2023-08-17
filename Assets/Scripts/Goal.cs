@@ -33,11 +33,18 @@ public class Goal : MonoBehaviour
                 Score += (Score / 10);
                 ball.ballScoreAdded = true;
                 timesScored++;
-                
+
+                GameManager.Instance.Ballsdropping.ReadyForNextBall = true;
+                if(GameManager.Instance.gmode == GMode.TEN_BALL)
+                {
+                    SpinningReel reel = GameManager.Instance.Reels[Random.Range(0, GameManager.Instance.Reels.Count)];
+                    reel.obstacleManager.ChangeObstacleToSpecial();
+                }
             }
 
 //work please
 //be nice
         }
     }
+
 }

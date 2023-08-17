@@ -18,7 +18,7 @@ public class SpinningReel : MonoBehaviour
     public float maxSpinTime = 30f;
     public float currentSpinTime = 0;
     public bool spinFinished = false;
-
+    public ObstacleManager obstacleManager;
     public void StartSpinning()
     {
         if (!spinning)
@@ -44,7 +44,10 @@ public class SpinningReel : MonoBehaviour
             }
         }
     }
-
+    private void Awake()
+    {
+        obstacleManager = gameObject.transform.GetComponentInChildren<ObstacleManager>();
+    }
     private void Update()
     {
        // MaxMoreThanMinDistance();

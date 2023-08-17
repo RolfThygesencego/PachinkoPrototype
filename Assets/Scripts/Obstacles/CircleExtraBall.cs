@@ -28,7 +28,7 @@ public class CircleExtraBall : CircleObstacle
             }
         }
     }
-
+    //bruh
     public override void OnCollisionExit2D(Collision2D collision)
     {
         base.OnCollisionExit2D(collision);
