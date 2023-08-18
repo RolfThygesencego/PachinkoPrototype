@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 4033808132218250329}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.881323, y: -0.53258765, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -113,7 +113,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 3
+  m_Constraints: 7
 --- !u!58 &4047833642820131931
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -148,7 +148,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.52
 --- !u!114 &5408191342126894721
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,6 +162,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UpgradeSpent: 0
+  Temporary: 0
   BallContact: 3
   originalColor: {r: 0, g: 0, b: 0, a: 0}
   pObstacleManager: {fileID: 0}
+  locScale: 0.5

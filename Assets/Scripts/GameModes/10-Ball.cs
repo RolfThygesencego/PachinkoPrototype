@@ -16,6 +16,7 @@ public class Ten_Ball : GameMode
         ballWager = 5;
         standardBallsAmount = 10;
         gMode = GMode.TEN_BALL;
+
     }
 
     

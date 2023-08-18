@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 
-public class CircleExtraBall : CircleObstacle 
-{ 
-    public CircleExtraBall()
+public class CircleObstacleTenBall : CircleObstacle
+{
+
+    public CircleObstacleTenBall()
     {
-        locScale = 1f;
+        locScale = 0.35f;
     }
     public override void OnCollisionEnter2D(UnityEngine.Collision2D collision)
     {
@@ -21,7 +22,7 @@ public class CircleExtraBall : CircleObstacle
             gameObject.GetComponent<SpriteRenderer>().color = Color.gray;
             gameObject.GetComponent<Rigidbody2D>().simulated = false;
         }
-        
+
     }
     //bruh
     public override void OnCollisionExit2D(Collision2D collision)
@@ -33,4 +34,5 @@ public class CircleExtraBall : CircleObstacle
     {
         base.OnCollisionStay2D(collision);
     }
+
 }

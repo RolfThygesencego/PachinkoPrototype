@@ -23,6 +23,18 @@ public class BallCollissionBox : MonoBehaviour
             {
                 collision.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
             }
+            else if (collision.GetComponent<Rigidbody2D>().velocity.x == 0)
+            {
+                int leftRight = Random.Range(0, 1);
+                if (leftRight == 1)
+                {
+                    collision.GetComponent<Rigidbody2D>().AddForce(new Vector2(1, 0));
+                }
+                if (leftRight == 0)
+                {
+                    collision.GetComponent<Rigidbody2D>().AddForce(new Vector2(-1, 0));
+                }
+            }
             
         }
     }

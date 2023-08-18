@@ -19,6 +19,10 @@ public class GameManager : MonoBehaviour
     public ReadyForSpin ReadyForSpin = new ReadyForSpin();
     public TextMeshProUGUI scoreTally;
     public TextMeshProUGUI BallTally;
+    public TextMeshProUGUI ScoreStreakTally;
+    public int ScoreMultiplier;
+    public TextMeshProUGUI ScoreMultiplierTally;
+    public int scoreStreak;
     private int Score;
 
     public State CurrentState;
@@ -31,7 +35,7 @@ public class GameManager : MonoBehaviour
     public void Awake()
     {
 
-        Score = 100;
+        
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -40,6 +44,9 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
         }
+        Score = 100;
+        scoreStreak = 0;
+        ScoreMultiplier = 100;
         ChangeRules(CurrentGameMode);
         ChangeState(ReadyForSpin);
         reelFinished.AddListener(Spinning.reelFinishedSpinning);
@@ -60,6 +67,8 @@ public class GameManager : MonoBehaviour
         //Debug.Log(CurrentState.ToString());
         CurrentState.Execute();
         scoreTally.text = $"{Score}";
+        ScoreStreakTally.text = $"{scoreStreak}X";
+        ScoreMultiplierTally.text = $"{ScoreMultiplier}%";
         DisplayBalls();
 
     }
@@ -76,20 +85,33 @@ public class GameManager : MonoBehaviour
     public void AddToScore(int scoreAddition)
     {
         Score += scoreAddition;
+        scoreStreak+= 1;
+        ScoreMultiplier += ScoreMultiplier / 10;
         if (scoreAddition == 0)
         {
+            scoreStreak = 0;
+            ScoreMultiplier = 100;
             foreach (Goal goal in Goals)
             {
                 goal.Score = goal.BaseScore;
+                foreach (SpinningReel reel in Reels)
+                {
+                    reel.obstacleManager.RefreshUpgrades();
+                }
             }
         }
     }
 
     public void UpgradeAddToScore()
     {
+        scoreStreak += 1;
+        ScoreMultiplier += ScoreMultiplier / 10;
         foreach (Goal goal in Goals)
         {
-            goal.Score += goal.Score / 10;
+            
+            goal.Score += goal.Score / 20;
+            if (goal.Score / 20 < 1 && goal.Score != 0)
+                goal.Score += 1;
         }
     }
 
@@ -107,6 +129,8 @@ public class GameManager : MonoBehaviour
     {
         if (Spinning.ballWager > 1 && CurrentState == ReadyForSpin)
             Spinning.ballWager -= ballWagerAmount;
+        if (Spinning.ballWager < 1)
+            Spinning.ballWager = 1;
     }
 
     void ChangeRules(GameMode gameMode)

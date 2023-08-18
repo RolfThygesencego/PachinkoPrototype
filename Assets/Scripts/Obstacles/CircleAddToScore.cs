@@ -5,7 +5,10 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class CircleAddToScore : CircleObstacle 
 { 
-    // Start is called before the first frame update
+    public CircleAddToScore()
+    {
+        locScale = 1f;
+    }
     public override void OnCollisionEnter2D(UnityEngine.Collision2D collision)
     {
 
@@ -16,17 +19,9 @@ public class CircleAddToScore : CircleObstacle
             
             UpgradeSpent =true;
             gameObject.GetComponent<SpriteRenderer>().color = Color.gray;
+            gameObject.GetComponent<Rigidbody2D>().simulated = false;
         }
-        if (collision.gameObject.CompareTag("Ball"))
-        {
-            BallContact -= 0.1f;
-            if (BallContact < 0)
-            {
-                ObstacleManager PobstacleManager = transform.GetComponentInParent<ObstacleManager>();
-                PobstacleManager.obstacles.Remove(gameObject);
-                Destroy(gameObject);
-            }
-        }
+     
     }
     //bruh
     public override void OnCollisionExit2D(Collision2D collision)

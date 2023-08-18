@@ -35,6 +35,8 @@ public class ObstacleManager : MonoBehaviour
     private int totalObstacles;
 
     public GameObject obstacle;
+    public GameObject tenBallObstacle;
+    public GameObject standardBallObstacle;
     public GameObject originStart;
     public GameObject circleExtraBall;
     public GameObject circleAddToScore;
@@ -44,6 +46,7 @@ public class ObstacleManager : MonoBehaviour
     public int BounceHighPowerups = 5;
     private GameObject prevObstacle;
     private float lastObDistance = 0;
+    public float obstacleScale = 1.5f;
    
 
     void Start()
@@ -51,44 +54,53 @@ public class ObstacleManager : MonoBehaviour
         AddAvailableUpgrades();
         spinningReel = GetComponentInParent<SpinningReel>();
         int totalObstacles = gameObject.transform.childCount;
+        if (GameManager.Instance.gmode == GMode.STANDARD)
+            obstacle = standardBallObstacle;
+        if (GameManager.Instance.gmode == GMode.TEN_BALL)
+            obstacle = tenBallObstacle;
+
         for (int i = 0; i < ExtraBallPowerups; i++)
         {
             GameObject ob = Instantiate(circleExtraBall);
-            ob.transform.SetParent(transform, false);
+            ob.transform.localScale = new Vector2(ob.GetComponent<CircleObstacle>().locScale, ob.GetComponent<CircleObstacle>().locScale);
+            ob.transform.SetParent(transform, true);
             ob.SetActive(false);
             Instantiate(ob);
             obstacles.Add(ob);
             inactiveObstacles.Add(ob);
             totalObstacles -= 1;
-            ob.GetComponent<CircleObstacle>().pObstacleManager = this;
+            ob.GetComponent<CircleObstacle>().SetObstacleManager();
         }
         for (int j = 0; j < AddToScorePowerups; j++)
         {
             GameObject ob = Instantiate(circleAddToScore);
-            ob.transform.SetParent(transform, false);
+            ob.transform.localScale = new Vector2(ob.GetComponent<CircleObstacle>().locScale, ob.GetComponent<CircleObstacle>().locScale);
+            ob.transform.SetParent(transform, true);
             ob.SetActive(false);
             Instantiate(ob);
             obstacles.Add(ob);
             inactiveObstacles.Add(ob);
             totalObstacles -= 1;
-            ob.GetComponent<CircleObstacle>().pObstacleManager = this;
+            ob.GetComponent<CircleObstacle>().SetObstacleManager();
         }
         for (int j = 0; j < BounceHighPowerups; j++)
         {
             GameObject ob = Instantiate(circleBounceHigh);
-            ob.transform.SetParent(transform, false);
+            ob.transform.localScale = new Vector2(ob.GetComponent<CircleObstacle>().locScale, ob.GetComponent<CircleObstacle>().locScale);
+            ob.transform.SetParent(transform, true);
             ob.SetActive(false);
             Instantiate(ob);
             obstacles.Add(ob);
             inactiveObstacles.Add(ob);
             totalObstacles -= 1;
-            ob.GetComponent<CircleObstacle>().pObstacleManager = this;
+            ob.GetComponent<CircleObstacle>().SetObstacleManager();
         }
         for (int i = 0; i < totalObstacles; i++)
         {
             var currentObstacle = transform.GetChild(i);
             obstacles.Add(currentObstacle.gameObject);
-            currentObstacle.GetComponent<CircleObstacle>().pObstacleManager = this;
+            currentObstacle.GetComponent<CircleObstacle>().SetObstacleManager();
+            currentObstacle.transform.localScale = new Vector2(currentObstacle.GetComponent<CircleObstacle>().locScale, currentObstacle.GetComponent<CircleObstacle>().locScale);
         }
 
 
@@ -113,7 +125,7 @@ public class ObstacleManager : MonoBehaviour
             if (obstacles.Count < totalObstacles)
             {
                 GameObject ob = Instantiate(obstacle);
-                ob.transform.SetParent(transform, false);
+                ob.transform.SetParent(transform, true);
                 ob.SetActive(false);
                 Instantiate(ob);
                 obstacles.Add(ob);
@@ -211,13 +223,13 @@ public class ObstacleManager : MonoBehaviour
                 if (!spinningReel.rightDirection)
                 {
                     float randX = Random.Range(minObDistance, maxObDistance);
-                    vect = new Vector2(originStart.transform.position.x + randX, Random.Range(0.6f, -0.6f));
+                    vect = new Vector2(originStart.transform.position.x + randX, Random.Range(0.4f, -0.4f));
                     lastObDistance = randX;
                 }
                 else
                 {
                     float randX = Random.Range(minObDistance, maxObDistance);
-                    vect = new Vector2(originStart.transform.position.x - randX, Random.Range(0.6f, -0.6f));
+                    vect = new Vector2(originStart.transform.position.x - randX, Random.Range(0.4f, -0.4f));
                     lastObDistance = randX;
                 }
                 obs.transform.localPosition = vect;
@@ -305,12 +317,19 @@ public class ObstacleManager : MonoBehaviour
       
         Vector2 obstpos = oldObst.gameObject.transform.position;
         obstacles.Remove(oldObst);
-        Destroy(oldObst);
+        ObstacleManager obMan = oldObst.GetComponent<CircleObstacle>().pObstacleManager;
+        
+        
 
         GameObject newObs = Instantiate(availableUpgrades[Random.Range(0, availableUpgrades.Count)]);
+        
         newObs.transform.position = obstpos;
+        newObs.GetComponent<CircleObstacle>().Temporary = true;
+        newObs.transform.localScale = new Vector2(newObs.GetComponent<CircleObstacle>().locScale, newObs.GetComponent<CircleObstacle>().locScale);
+        newObs.transform.transform.SetParent(obMan.gameObject.transform);
         obstacles.Add(newObs);
         tempUpgrades.Add(newObs);
+        Destroy(oldObst);
     }
     public void AddAvailableUpgrades()
     {
@@ -322,4 +341,10 @@ public class ObstacleManager : MonoBehaviour
         availableUpgrades.Add(circleBounceHigh);
         availableUpgrades.Add(circleExtraBall);
     }
+    public void RemoveBalls(Ball ball)
+    {
+        GameManager.Instance.balls.Remove(ball);
+        Destroy(ball);
+    }
+
 }

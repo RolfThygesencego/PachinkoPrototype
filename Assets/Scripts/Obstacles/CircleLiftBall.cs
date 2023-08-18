@@ -5,7 +5,10 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class CircleLiftBall : CircleObstacle 
 { 
-    // Start is called before the first frame update
+    public CircleLiftBall()
+    {
+        locScale = 1f;
+    }
     public override void OnCollisionEnter2D(UnityEngine.Collision2D collision)
     {
 
@@ -22,17 +25,9 @@ public class CircleLiftBall : CircleObstacle
             
             UpgradeSpent =true;
             gameObject.GetComponent<SpriteRenderer>().color = Color.gray;
+
         }
-        if (collision.gameObject.CompareTag("Ball"))
-        {
-            BallContact -= 0.1f;
-            if (BallContact < 0)
-            {
-                ObstacleManager PobstacleManager = transform.GetComponentInParent<ObstacleManager>();
-                PobstacleManager.obstacles.Remove(gameObject);
-                Destroy(gameObject);
-            }
-        }
+      
     }
 
     public override void OnCollisionExit2D(Collision2D collision)

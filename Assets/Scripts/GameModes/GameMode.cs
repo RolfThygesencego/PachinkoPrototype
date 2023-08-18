@@ -13,6 +13,7 @@ public abstract class GameMode : MonoBehaviour
     public int ballWager;
     public int standardBallsAmount;
     public GMode gMode;
+    public GameObject CircleObstacle;
 }
 
 

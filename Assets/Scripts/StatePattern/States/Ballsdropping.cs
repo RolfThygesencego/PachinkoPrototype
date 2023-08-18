@@ -16,10 +16,11 @@ public class Ballsdropping : State
     public List<Ball> readyBalls = new List<Ball>();
     public int[] goalScores = new int[9];
     public bool ReadyForNextBall = false;
+    
     public override void End()
     {
         ballsToBeAdded = 0;
-        RemoveTempUpgrades();
+        
         saveData();
     }
 
@@ -94,13 +95,13 @@ public class Ballsdropping : State
             Ball go = GameManager.Instantiate(GameManager.Instance.ball);
             GameManager.Instance.balls.Add(go);
             readyBalls.Add(go);
-            go.transform.position = new Vector2(Random.Range(-3f, 3f), 8.37f);
+            go.transform.position = new Vector2(Random.Range(-4.3f, 4.3f), 7.8f);
             ballsToBeAdded -= 1;
         }
             if (readyBalls.Count > 0 && ReadyForNextBall)
             {
                 readyBalls[0].GetComponent<Rigidbody2D>().simulated = true;
-                readyBalls[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-200, 200), 0));
+                readyBalls[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-450, 450), 0));
                 ballTimer = ballTimerMax;
                 readyBalls.RemoveAt(0);
                 ReadyForNextBall = false;
@@ -126,22 +127,6 @@ public class Ballsdropping : State
 
 
     }
-    void RemoveTempUpgrades()
-    {
-        foreach (SpinningReel reel in GameManager.Instance.Reels)
-        {
-            ObstacleManager obman = reel.GetComponentInChildren<ObstacleManager>();
-            int obManIndex = obman.tempUpgrades.Count;
-            for (int i = 0;i < obManIndex;i++) 
-            {
-                GameObject obs = obman.obstacles[i];
-                obman.tempUpgrades.Remove(obs);
-                obman.obstacles.Remove(obs);
-                GameObject.Destroy(obs);
-                obman.readyObstacles.RemoveAll(null);
-                obman.inactiveObstacles.RemoveAll(null);
-            }
-        }
-    }
+  
 }
 

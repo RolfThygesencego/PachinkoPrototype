@@ -20,8 +20,30 @@ public class ReadyForSpin : State
     {
         GameManager.Instance.Spinning.ballWager = GameManager.Instance.ballsStandardAmount;
         GameManager.Instance.Ballsdropping.ballsToBeAdded = 0;
+        RemoveTempUpgrades();
+    }
+    void RemoveTempUpgrades()
+    {
+        foreach (SpinningReel reel in GameManager.Instance.Reels)
+        {
+            ObstacleManager obman = reel.GetComponentInChildren<ObstacleManager>();
+            int obManIndex = obman.tempUpgrades.Count;
+            for (int i = 0; i < obManIndex; i++)
+            {
+                GameObject obs = obman.obstacles.Find(t => t.GetComponent<CircleObstacle>().Temporary == true);
+                obman.tempUpgrades.Remove(obs);
+                obman.obstacles.Remove(obs);
+                if (obman.readyObstacles.Contains(obs))
+                    obman.readyObstacles.Remove(obs);
+                if (obman.inactiveObstacles.Contains(obs))
+                    obman.inactiveObstacles.Remove(obs);
+
+                GameObject.Destroy(obs);
+                
+
+            }
+        }
     }
 
-    
 }
 
