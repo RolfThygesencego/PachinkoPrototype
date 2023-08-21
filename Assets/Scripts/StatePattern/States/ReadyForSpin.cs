@@ -21,6 +21,9 @@ public class ReadyForSpin : State
         GameManager.Instance.Spinning.ballWager = GameManager.Instance.ballsStandardAmount;
         GameManager.Instance.Ballsdropping.ballsToBeAdded = 0;
         RemoveTempUpgrades();
+        GameManager.Instance.pegsHit = 0;
+        GameManager.Instance.Streaks.Clear();
+        GameManager.Instance.maxScoreStreak = 0;
     }
     void RemoveTempUpgrades()
     {

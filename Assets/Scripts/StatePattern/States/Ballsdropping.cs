@@ -16,12 +16,13 @@ public class Ballsdropping : State
     public List<Ball> readyBalls = new List<Ball>();
     public int[] goalScores = new int[9];
     public bool ReadyForNextBall = false;
-    
+
     public override void End()
     {
         ballsToBeAdded = 0;
-        
+
         saveData();
+
     }
 
     public override void Execute()
@@ -52,17 +53,9 @@ public class Ballsdropping : State
         ReadyForNextBall = true;
         ballsFinished = 0;
         ballTimer = 0.5f;
-        DropBalls();
+       // DropBalls();
     }
-    public void DropBalls()
-    {
-        foreach (Ball obj in GameManager.Instance.balls)
-        {
-            obj.GetComponent<Rigidbody2D>().simulated = true;
 
-            obj.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-300, 300), 0));
-        }
-    }
 
     public void AddBallsStandard()
     {
@@ -81,8 +74,11 @@ public class Ballsdropping : State
         {
             readyBalls[0].GetComponent<Rigidbody2D>().simulated = true;
             readyBalls[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-200, 200), 0));
+
             ballTimer = ballTimerMax;
+            readyBalls[0].GetComponent<SpriteRenderer>().color = Color.white;
             readyBalls.RemoveAt(0);
+
 
         }
 
@@ -98,15 +94,16 @@ public class Ballsdropping : State
             go.transform.position = new Vector2(Random.Range(-4.3f, 4.3f), 7.8f);
             ballsToBeAdded -= 1;
         }
-            if (readyBalls.Count > 0 && ReadyForNextBall)
-            {
-                readyBalls[0].GetComponent<Rigidbody2D>().simulated = true;
-                readyBalls[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-450, 450), 0));
-                ballTimer = ballTimerMax;
-                readyBalls.RemoveAt(0);
-                ReadyForNextBall = false;
-            }
-    }
+        if (readyBalls.Count > 0 && ReadyForNextBall)
+        {
+            readyBalls[0].GetComponent<Rigidbody2D>().simulated = true;
+            readyBalls[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-120, 120), Random.Range(200, 300)));
+            ballTimer = ballTimerMax;
+            readyBalls[0].GetComponent<SpriteRenderer>().color = Color.white;
+            readyBalls.RemoveAt(0);
+            ReadyForNextBall = false;
+        }
+    } 
 
     void saveData()
     {
@@ -124,9 +121,30 @@ public class Ballsdropping : State
 
         GameManager.Instance.CSVWriter.WriteCSVSaveGoals(goalScores[0], goalScores[1], goalScores[2], goalScores[3], goalScores[4], goalScores[5], goalScores[6], goalScores[7], goalScores[8], prevSpins + 1, prevBalls + ballsFinished);
 
+        if (GameManager.Instance.gmode == GMode.TEN_BALL)
+        {
+            int streakTotal = 0;
+            foreach (int i in GameManager.Instance.Streaks)
+            {
+                streakTotal += i;
+            }
+            float averageStreak = 0;
+            if (GameManager.Instance.Streaks.Count > 0)
+             averageStreak= streakTotal / GameManager.Instance.Streaks.Count;
 
-
+            GameManager.Instance.CSVWriter.WriteTenBallCSV(GameManager.Instance.pegsHit, GameManager.Instance.maxScoreStreak, averageStreak, prevSpins + 1);
+        }
     }
-  
+    //public void DropBalls()
+    //{
+    //    foreach (Ball obj in GameManager.Instance.balls)
+    //    {
+    //        obj.GetComponent<Rigidbody2D>().simulated = true;
+
+    //        obj.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-300, 300), 99999990));
+
+    //    }
+    //}
+
 }
 

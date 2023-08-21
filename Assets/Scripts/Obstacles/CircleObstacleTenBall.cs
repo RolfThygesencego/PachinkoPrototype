@@ -5,7 +5,7 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class CircleObstacleTenBall : CircleObstacle
 {
-
+    WaitForSeconds delay = new WaitForSeconds(0.2f);
     public CircleObstacleTenBall()
     {
         locScale = 0.35f;
@@ -17,13 +17,25 @@ public class CircleObstacleTenBall : CircleObstacle
         {
             Debug.Log("triggered");
             GameManager.Instance.UpgradeAddToScore();
-
+            StartCoroutine(DisableSelf());
             UpgradeSpent = true;
             gameObject.GetComponent<SpriteRenderer>().color = Color.gray;
-            gameObject.GetComponent<Rigidbody2D>().simulated = false;
+
+            GameManager.Instance.pegsHit += 1;
         }
 
     }
+    public IEnumerator DisableSelf()
+    {
+        yield return delay;
+
+
+        gameObject.GetComponent<Rigidbody2D>().simulated = false;
+
+
+        yield return null;
+    }
+
     //bruh
     public override void OnCollisionExit2D(Collision2D collision)
     {

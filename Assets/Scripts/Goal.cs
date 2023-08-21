@@ -13,7 +13,7 @@ public class Goal : MonoBehaviour
     public int maxBallCount;
     public int timesScored;
     public GameObject bottomCube;
-    public float ballFallDownTime = 10f;
+    public float ballFallDownTime = 15f;
     private void Awake()
     {
         BaseScore = Score;
@@ -33,7 +33,7 @@ public class Goal : MonoBehaviour
                 bottomCube.GetComponentInChildren<Rigidbody2D>().simulated = true;
                 bottomCube.GetComponentInChildren<MeshRenderer>().enabled = true;
                 ballCount = 0;
-                ballFallDownTime = 10f;
+                ballFallDownTime = 15f;
             }
         }
     }

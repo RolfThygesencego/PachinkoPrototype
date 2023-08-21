@@ -47,6 +47,7 @@ public class ObstacleManager : MonoBehaviour
     private GameObject prevObstacle;
     private float lastObDistance = 0;
     public float obstacleScale = 1.5f;
+    public float heightVariation = 0.01f;
    
 
     void Start()
@@ -223,13 +224,13 @@ public class ObstacleManager : MonoBehaviour
                 if (!spinningReel.rightDirection)
                 {
                     float randX = Random.Range(minObDistance, maxObDistance);
-                    vect = new Vector2(originStart.transform.position.x + randX, Random.Range(0.4f, -0.4f));
+                    vect = new Vector2(originStart.transform.position.x + randX, Random.Range(-heightVariation, heightVariation));
                     lastObDistance = randX;
                 }
                 else
                 {
                     float randX = Random.Range(minObDistance, maxObDistance);
-                    vect = new Vector2(originStart.transform.position.x - randX, Random.Range(0.4f, -0.4f));
+                    vect = new Vector2(originStart.transform.position.x - randX, Random.Range(-heightVariation, heightVariation));
                     lastObDistance = randX;
                 }
                 obs.transform.localPosition = vect;
@@ -291,12 +292,15 @@ public class ObstacleManager : MonoBehaviour
     {
         if (prevObstacle != null)
         {
+            if (Vector2.Distance(obs.transform.position, originStart.transform.position) < lastX) 
+                return false;
 
-                if (Mathf.Abs(obs.transform.position.x - originStart.transform.position.x) < lastX)
-                    return false;
+                //if (Mathf.Abs(obs.transform.position.x - originStart.transform.position.x) < lastX)
+                //    return false;
         }
         return true;
     }
+    
     public void RefreshUpgrades()
     {
         foreach (GameObject ob in obstacles)

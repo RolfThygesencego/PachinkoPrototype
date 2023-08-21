@@ -36,6 +36,7 @@ public class CircleObstacle : MonoBehaviour
                 ObstacleManager PobstacleManager = transform.GetComponentInParent<ObstacleManager>();
                 PobstacleManager.obstacles.Remove(gameObject);
                 Destroy(gameObject);
+                
             }
         }
     }

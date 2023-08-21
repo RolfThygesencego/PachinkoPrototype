@@ -11,7 +11,7 @@ public class Ten_Ball : GameMode
 {
     public Ten_Ball()
     {
-        ballBounciness = 0.35f;
+        ballBounciness = 0.25f;
         ballGravityScale = 1.5f;
         ballWager = 5;
         standardBallsAmount = 10;

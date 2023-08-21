@@ -4,10 +4,12 @@ using UnityEngine;
 using System.IO;
 using Unity.VisualScripting;
 using System;
+using Unity.Mathematics;
 
 public class CSVWriter
 {
-    string filename = Application.dataPath + "/test.csv";
+    string defaultFilename = Application.dataPath + "/Default.csv";
+    string tenBallFilename = Application.dataPath + "/TenBall.csv";
 
     [System.Serializable]
     public class GoalData
@@ -39,17 +41,23 @@ public class CSVWriter
 
     }
 
-    public void CreateCVSGoals()
+    public void CreateCSVGoals()
     {
-        TextWriter tw = new StreamWriter(filename, false);
+        TextWriter tw = new StreamWriter(defaultFilename, false);
     tw.WriteLine("Goal1, Goal2, Goal 3, Goal 4, Goal 5, Goal 6, Goal 7, Goal 8, Goal 9, Times Spun, Balls Per Spin");
+        tw.Close();
+    }
+    public void CreateTenBallGoals()
+    {
+        TextWriter tw = new StreamWriter(tenBallFilename, false);
+        tw.WriteLine("totalPegsHit, maxStreak, averageStreak, timesSpun");
         tw.Close();
     }
     public void WriteCSVSaveGoals(int goal1, int goal2, int goal3, int goal4, int goal5, int goal6, int goal7, int goal8, int goal9, int timesSpun, int ballsPerSpin)
     {
 
 
-        StreamWriter tw = new StreamWriter(filename, true);
+        StreamWriter tw = new StreamWriter(defaultFilename, true);
         tw.WriteLine(goal1 + "," +
             goal2 + "," +
             goal3 + "," +
@@ -64,10 +72,21 @@ public class CSVWriter
         tw.Close();
 
     }
+    public void WriteTenBallCSV(int totalPegsHit, int maxStreak, float averageStreak, int timesSpun)
+    {
+        StreamWriter tw = new StreamWriter(tenBallFilename, true);
+        tw.WriteLine(
+        totalPegsHit + "," +
+        maxStreak + "," +
+        averageStreak + "," +
+        timesSpun);
+
+        tw.Close();
+    }
 
     public int[] loadCVSGoalsScored()
     {
-        TextReader tw = new StreamReader(filename);
+        TextReader tw = new StreamReader(defaultFilename);
         var data = tw.ReadToEnd();
         string[] dataValues = data.Split(",");
         int[] goalIndex = new int[dataValues.Length];
@@ -93,7 +112,7 @@ public class CSVWriter
     }
     public int LoadCVSTimesSPun()
     {
-        TextReader tw = new StreamReader(filename);
+        TextReader tw = new StreamReader(defaultFilename);
         var data = tw.ReadToEnd();
         string[] dataValues = data.Split(",");
         int spinValue;
@@ -113,7 +132,7 @@ public class CSVWriter
     }
     public int LoadCVSBallsPerSpin()
     {
-        TextReader tw = new StreamReader(filename);
+        TextReader tw = new StreamReader(defaultFilename);
         var data = tw.ReadToEnd();
         string[] dataValues = data.Split(",");
         int ballsValue;

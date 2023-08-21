@@ -15,7 +15,7 @@ public class CircleExtraBall : CircleObstacle
         if (collision.gameObject.CompareTag("Ball") && UpgradeSpent == false)
         {
             Debug.Log("triggered");
-            GameManager.Instance.UpgradeAddToScore();
+            GameManager.Instance.Ballsdropping.ballsToBeAdded++;
 
             UpgradeSpent = true;
             gameObject.GetComponent<SpriteRenderer>().color = Color.gray;

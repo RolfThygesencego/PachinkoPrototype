@@ -23,7 +23,10 @@ public class GameManager : MonoBehaviour
     public int ScoreMultiplier;
     public TextMeshProUGUI ScoreMultiplierTally;
     public int scoreStreak;
+    public int maxScoreStreak = 0;
+    public List<int> Streaks = new List<int>();
     private int Score;
+    public int pegsHit = 0;
 
     public State CurrentState;
     public CSVWriter CSVWriter = new CSVWriter();
@@ -50,7 +53,8 @@ public class GameManager : MonoBehaviour
         ChangeRules(CurrentGameMode);
         ChangeState(ReadyForSpin);
         reelFinished.AddListener(Spinning.reelFinishedSpinning);
-        CSVWriter.CreateCVSGoals();
+        CSVWriter.CreateCSVGoals();
+        CSVWriter.CreateTenBallGoals();
     }
 
     public void ChangeState(State nextState)
@@ -86,9 +90,14 @@ public class GameManager : MonoBehaviour
     {
         Score += scoreAddition;
         scoreStreak+= 1;
+        if (scoreStreak > maxScoreStreak)
+            maxScoreStreak = scoreStreak;
+        
         ScoreMultiplier += ScoreMultiplier / 10;
         if (scoreAddition == 0)
         {
+            if (scoreStreak != 0)
+                Streaks.Add(scoreStreak);
             scoreStreak = 0;
             ScoreMultiplier = 100;
             foreach (Goal goal in Goals)
