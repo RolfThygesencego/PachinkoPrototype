@@ -7,7 +7,7 @@ public class CircleObstacle : MonoBehaviour
 {
     public bool UpgradeSpent = false;
     public bool Temporary = false;
-    public float BallContact = 3f;
+    public float BallContact = 5f;
     public Color originalColor;
     public ObstacleManager pObstacleManager;
     public float locScale;
@@ -30,13 +30,11 @@ public class CircleObstacle : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            BallContact -= 0.15f;
+            BallContact -= 0.10f;
             if (BallContact < 0)
             {
-                ObstacleManager PobstacleManager = transform.GetComponentInParent<ObstacleManager>();
-                PobstacleManager.obstacles.Remove(gameObject);
-                Destroy(gameObject);
-                
+                gameObject.GetComponent<Rigidbody2D>().simulated = false;
+
             }
         }
     }

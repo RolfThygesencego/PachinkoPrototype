@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour
     public int ballWagerAmount;
     public int ballsStandardAmount;
 
+    public bool changeReelDistance;
+    public float obDistance;
+
+    public bool DeleteObOnHit;
+
     public void Awake()
     {
 
@@ -74,7 +79,19 @@ public class GameManager : MonoBehaviour
         ScoreStreakTally.text = $"{scoreStreak}X";
         ScoreMultiplierTally.text = $"{ScoreMultiplier}%";
         DisplayBalls();
+        if (changeReelDistance)
+        {
+            foreach (SpinningReel reel in Reels)
+            {
+                reel.maxObDistance = obDistance;
+                reel.minObDistance = obDistance;
+            }
+        }
 
+    }
+    public void FixedUpdate()
+    {
+        CurrentState.FixedExecute();
     }
 
     public void EnterSpinState()
@@ -103,10 +120,11 @@ public class GameManager : MonoBehaviour
             foreach (Goal goal in Goals)
             {
                 goal.Score = goal.BaseScore;
-                foreach (SpinningReel reel in Reels)
-                {
-                    reel.obstacleManager.RefreshUpgrades();
-                }
+                
+            }
+            foreach (SpinningReel reel in Reels)
+            {
+                reel.obstacleManager.RefreshUpgrades();
             }
         }
     }

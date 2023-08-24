@@ -224,13 +224,13 @@ public class ObstacleManager : MonoBehaviour
                 if (!spinningReel.rightDirection)
                 {
                     float randX = Random.Range(minObDistance, maxObDistance);
-                    vect = new Vector2(originStart.transform.position.x + randX, Random.Range(-heightVariation, heightVariation));
+                    vect = new Vector2(originStart.transform.position.x + randX, Random.Range(-heightVariation, heightVariation - 0.01f));
                     lastObDistance = randX;
                 }
                 else
                 {
                     float randX = Random.Range(minObDistance, maxObDistance);
-                    vect = new Vector2(originStart.transform.position.x - randX, Random.Range(-heightVariation, heightVariation));
+                    vect = new Vector2(originStart.transform.position.x - randX, Random.Range(-heightVariation, heightVariation - 0.01f));
                     lastObDistance = randX;
                 }
                 obs.transform.localPosition = vect;
@@ -309,6 +309,20 @@ public class ObstacleManager : MonoBehaviour
             CircleObstacle co = ob.GetComponent<CircleObstacle>();
             co.UpgradeSpent = false;
             ob.GetComponent<SpriteRenderer>().color = co.originalColor;
+            ob.GetComponent<SpriteRenderer>().enabled = true;
+        }
+    }
+    public void TurnInvisible()
+    {
+        foreach (GameObject ob in obstacles)
+        {
+
+            if (ob.GetComponent<CircleObstacle>().UpgradeSpent == true)
+            {
+                ob.GetComponent<Rigidbody2D>().simulated = false;
+                ob.GetComponent<SpriteRenderer>().enabled = false;
+            }
+
         }
     }
 

@@ -29,8 +29,8 @@ public class CircleObstacleTenBall : CircleObstacle
     {
         yield return delay;
 
-
-        gameObject.GetComponent<Rigidbody2D>().simulated = false;
+        if (GameManager.Instance.DeleteObOnHit == true)
+            gameObject.GetComponent<Rigidbody2D>().simulated = false;
 
 
         yield return null;

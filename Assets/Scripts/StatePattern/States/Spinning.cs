@@ -52,5 +52,9 @@ public class Spinning : State
 
         }
     }
+    public override void FixedExecute()
+    {
+
+    }
 }
 

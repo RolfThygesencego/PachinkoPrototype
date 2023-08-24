@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 
-public class CircleLiftBall : CircleObstacle 
+public class CircleLiftBall : CircleObstacleTenBall 
 { 
     public CircleLiftBall()
     {
@@ -15,7 +15,8 @@ public class CircleLiftBall : CircleObstacle
         if (collision.gameObject.CompareTag("Ball") && UpgradeSpent == false)
         {
             Debug.Log("triggered");
-            gameObject.GetComponent<Rigidbody2D>().simulated = false;
+            if (GameManager.Instance.DeleteObOnHit == true)
+                gameObject.GetComponent<Rigidbody2D>().simulated = false;
             float xBurst;
             if (collision.transform.position.x < transform.position.x)
                 xBurst = -300;

@@ -47,6 +47,10 @@ public class ReadyForSpin : State
             }
         }
     }
+    public override void FixedExecute()
+    {
+
+    }
 
 }
 

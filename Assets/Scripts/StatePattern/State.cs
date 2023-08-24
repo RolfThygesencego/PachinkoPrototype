@@ -15,6 +15,7 @@ public abstract class State
     public abstract void Initialize();
 
     public abstract void Execute();
+    public abstract void FixedExecute();
 
     public abstract void End();
 }

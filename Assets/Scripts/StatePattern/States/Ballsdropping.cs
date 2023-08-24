@@ -11,11 +11,15 @@ public class Ballsdropping : State
 {
     public int ballsFinished = 0;
     public int ballsToBeAdded = 0;
-    public float ballTimer = 3f;
+    public float ballTimer = 1f;
     public float ballTimerMax = 5f;
     public List<Ball> readyBalls = new List<Ball>();
     public int[] goalScores = new int[9];
     public bool ReadyForNextBall = false;
+    public float blinkTimer = 0.2f;
+    public float secondBlinkTimer = 0.2f;
+    public float blinkTimerMax = 0.2f;
+    public bool setSecondblinkTimerEnabled = false;
 
     public override void End()
     {
@@ -27,19 +31,7 @@ public class Ballsdropping : State
 
     public override void Execute()
     {
-        switch (GameManager.Instance.gmode)
-        {
-            case GMode.STANDARD:
-                {
-                    AddBallsStandard();
-                    break;
-                }
-            case GMode.TEN_BALL:
-                {
-                    AddBalls10_Ball();
-                    break;
-                }
-        }
+        
 
         if (ballsFinished >= GameManager.Instance.balls.Count && ballsFinished > 0)
         {
@@ -94,10 +86,41 @@ public class Ballsdropping : State
             go.transform.position = new Vector2(Random.Range(-4.3f, 4.3f), 7.8f);
             ballsToBeAdded -= 1;
         }
-        if (readyBalls.Count > 0 && ReadyForNextBall)
+        if (ReadyForNextBall)
+        {
+            foreach (SpinningReel reel in GameManager.Instance.Reels)
+            {
+                reel.obstacleManager.TurnInvisible();
+            }
+            blinkTimer -= 0.1f;
+            
+            if (blinkTimer < 0)
+            {
+                if(!setSecondblinkTimerEnabled)
+                secondBlinkTimer = blinkTimerMax;
+                setSecondblinkTimerEnabled = true;
+                secondBlinkTimer -= 0.1f;
+                readyBalls[0].GetComponent<SpriteRenderer>().color = Color.white;
+
+
+            }
+            if (secondBlinkTimer < 0)
+            {
+                
+                readyBalls[0].GetComponent<SpriteRenderer>().color = Color.gray;
+                blinkTimer = blinkTimerMax;
+                setSecondblinkTimerEnabled = false;
+                
+            }
+            readyBalls[0].GetComponent<SpriteRenderer>().color = Color.white;
+            ballTimer -= 0.1f;
+  
+        }
+        
+        if (readyBalls.Count > 0 && ballTimer < 0)
         {
             readyBalls[0].GetComponent<Rigidbody2D>().simulated = true;
-            readyBalls[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-120, 120), Random.Range(200, 300)));
+            readyBalls[0].GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.Range(-320, 320), Random.Range(200, 300)));
             ballTimer = ballTimerMax;
             readyBalls[0].GetComponent<SpriteRenderer>().color = Color.white;
             readyBalls.RemoveAt(0);
@@ -133,6 +156,23 @@ public class Ballsdropping : State
              averageStreak= streakTotal / GameManager.Instance.Streaks.Count;
 
             GameManager.Instance.CSVWriter.WriteTenBallCSV(GameManager.Instance.pegsHit, GameManager.Instance.maxScoreStreak, averageStreak, prevSpins + 1);
+        }
+    }
+
+    public override void FixedExecute()
+    {
+        switch (GameManager.Instance.gmode)
+        {
+            case GMode.STANDARD:
+                {
+                    AddBallsStandard();
+                    break;
+                }
+            case GMode.TEN_BALL:
+                {
+                    AddBalls10_Ball();
+                    break;
+                }
         }
     }
     //public void DropBalls()
