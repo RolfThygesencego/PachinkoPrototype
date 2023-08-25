@@ -6,7 +6,7 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class BallCollissionBox : MonoBehaviour
 {
-
+    
     void Start()
     {
 
@@ -19,7 +19,7 @@ public class BallCollissionBox : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            if (collision.GetComponent<Ball>().ballScoreAdded)
+            if (collision.GetComponent<BallNoRand>().ballScoreAdded)
             {
                 collision.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
             }

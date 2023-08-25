@@ -43,7 +43,7 @@ public class Goal : MonoBehaviour
         if (collision.gameObject.CompareTag("Ball"))
         {
             Debug.Log("triggered");
-            Ball ball = collision.gameObject.GetComponent<Ball>();
+            BallNoRand ball = collision.gameObject.GetComponent<BallNoRand>();
             if (!ball.ballScoreAdded)
             {
                 GameManager.Instance.Ballsdropping.ballsFinished += 1;
