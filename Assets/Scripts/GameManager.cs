@@ -61,7 +61,6 @@ public class GameManager : MonoBehaviour
         reelFinished.AddListener(Spinning.reelFinishedSpinning);
         CSVWriter.CreateCSVGoals();
         CSVWriter.CreateTenBallGoals();
-        AltObstacleManager.SetupObstacles();
     }
 
     public void ChangeState(State nextState)

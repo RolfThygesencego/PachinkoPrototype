@@ -7,13 +7,14 @@ public class BallNoRand : MonoBehaviour
     public bool ballScoreAdded = false;
     public bool toBeRemoved = false;
     public bool Falling = true;
+    public float speed = 0.08f;
     public void Awake()
     {
         
     }
     public void Update()
     {
-        FallDown();
+        //FallDown();
     }
     void FallDown()
     {

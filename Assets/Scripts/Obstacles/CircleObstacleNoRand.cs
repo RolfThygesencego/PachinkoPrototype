@@ -6,6 +6,7 @@ using UnityEngine.SocialPlatforms.Impl;
 public class CircleObstacleNoRand : MonoBehaviour
 {
     bool directionSet = false;
+    public float speed;
     int Left;
     public CircleObstacleNoRand()
     {
@@ -29,7 +30,7 @@ public class CircleObstacleNoRand : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            collision.gameObject.transform.position = new Vector2(collision.gameObject.transform.position.x, collision.gameObject.transform.position.y - 0.01f);
+            collision.gameObject.transform.position = new Vector2(collision.gameObject.transform.position.x, collision.gameObject.transform.position.y - speed / 10);
             collision.gameObject.GetComponent<BallNoRand>().Falling = true;
         }
 
@@ -41,11 +42,11 @@ public class CircleObstacleNoRand : MonoBehaviour
         {
             if (Left > 0)
             {
-                collision.gameObject.transform.position = new Vector2(collision.gameObject.transform.position.x - 0.015f, collision.gameObject.transform.position.y - 0.005f);
+                collision.gameObject.transform.position = new Vector2(collision.gameObject.transform.position.x - speed / 8, collision.gameObject.transform.position.y - speed / 20);
             }
             else
             {
-                collision.gameObject.transform.position = new Vector2(collision.gameObject.transform.position.x + 0.015f, collision.gameObject.transform.position.y - 0.005f);
+                collision.gameObject.transform.position = new Vector2(collision.gameObject.transform.position.x + speed / 8, collision.gameObject.transform.position.y - speed / 20);
             }
         }
 

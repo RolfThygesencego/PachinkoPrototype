@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[SerializeField]
 public class AltObstacleManager : MonoBehaviour
 {
     public List<GameObject> obstacles = new List<GameObject>();
@@ -17,7 +18,7 @@ public class AltObstacleManager : MonoBehaviour
     private bool Spinning = false;
 
     private float SpinningSpeed = 0.1f;
-
+    public float obSpeed;
     [SerializeField]
     private float minObDistance = 1f;
     [SerializeField]
@@ -80,6 +81,7 @@ public class AltObstacleManager : MonoBehaviour
     {
         ScaleObstacles();
         ChangeObPositions();
+        ChangeObstacleSpeed();
     }
     public void ScaleObstacles()
     {
@@ -126,6 +128,13 @@ public class AltObstacleManager : MonoBehaviour
 
         }
        
+    }
+    public void ChangeObstacleSpeed()
+    {
+        foreach (GameObject go in obstacles)
+        {
+            go.GetComponent<CircleObstacleNoRand>().speed = obSpeed;
+        }
     }
 
 }

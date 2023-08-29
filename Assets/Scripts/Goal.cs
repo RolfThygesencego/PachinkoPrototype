@@ -19,6 +19,8 @@ public class Goal : MonoBehaviour
         BaseScore = Score;
         ballCount = 0;
         ballFallDownTime = 10f;
+        bottomCube.GetComponentInChildren<Rigidbody2D>().simulated = true;
+        bottomCube.GetComponentInChildren<MeshRenderer>().enabled = true;
     }
     private void Update()
     {
