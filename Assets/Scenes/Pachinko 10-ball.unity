@@ -4759,7 +4759,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 836f24f3d467ff9479f16c6a3b94ea4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballBounciness: 0.4
+  ballBounciness: 0.6
   ballGravityScale: 1.45
   ballWager: 5
   standardBallsAmount: 10
