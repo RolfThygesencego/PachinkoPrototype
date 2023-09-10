@@ -8,6 +8,7 @@ public class CircleObstacleNoRand : MonoBehaviour
     bool directionSet = false;
     public float speed;
     int Left;
+    public GameObject lastBall;
     public CircleObstacleNoRand()
     {
     }
@@ -15,10 +16,16 @@ public class CircleObstacleNoRand : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            if (!directionSet)
+            if (lastBall == null || lastBall != collision.gameObject)
+            {
                 Left = Random.Range(0, 2);
-
-            directionSet = true;
+                lastBall = collision.gameObject;
+            }
+            if (!directionSet)
+            {
+                
+            }
+                
             collision.gameObject.GetComponent<BallNoRand>().Falling = false;
 
         }

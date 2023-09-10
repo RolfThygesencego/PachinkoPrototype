@@ -18,6 +18,7 @@ public class PrefabHolder : MonoBehaviour
     public GameObject circleAddToScore;
     public GameObject circleBounceHigh;
     public GameObject goal;
+    public GameObject pegPoint;
 
     public void Awake()
     {

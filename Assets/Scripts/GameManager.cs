@@ -132,6 +132,7 @@ public class GameManager : MonoBehaviour
 
     public void UpgradeAddToScore()
     {
+        
         scoreStreak += 1;
         ScoreMultiplier += ScoreMultiplier / 10;
         foreach (Goal goal in Goals)

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 [SerializeField]
@@ -10,10 +11,11 @@ public class AltObstacleManager : MonoBehaviour
     public List<GameObject> inactiveObstacles = new List<GameObject>();
     public List<GameObject> bottomObs = new List<GameObject>();
     public List<GameObject> goals = new List<GameObject>();
+    public List<GameObject> pointPegs = new List<GameObject>();
     public List<GameObject> readyObstacles = new List<GameObject>();
     public List<GameObject> availableUpgrades = new List<GameObject>();
     public List<GameObject> tempUpgrades = new List<GameObject>();
-    
+
 
     private bool Spinning = false;
 
@@ -34,48 +36,86 @@ public class AltObstacleManager : MonoBehaviour
     public float oldLengthDistance;
     public int ObstacleRows = 5;
     public GameObject obstacleHolder;
-    public GameObject goal;
+    public GameObject goalHolder;
+    public GameObject pointPegHolder;
 
-
+    public bool morePegPoints = false;
+    public int additionalPegsPerRow = 0;
+    private int maxObsPerRow = 10;
+    public int setMaxObsPerRow;
+    private bool lastOffset = false;
+    private float finalOffset;
+    private bool alternateLeft = false;
     public void SetupObstacles()
     {
         int amountOfObsPerRow = 1;
+        int rowsCounted = 0;
+        float offset = 0f;
         for (int i = 1; i < ObstacleRows + 1; i++)
         {
 
             int sideDistance = 1;
-            float offset = ((LengthDistance / 2) * i);
 
-            for (int j = 1; j < amountOfObsPerRow; j += 1)
+            if (amountOfObsPerRow < maxObsPerRow)
+                offset = ((LengthDistance / 2) * (i + additionalPegsPerRow));
+            if (amountOfObsPerRow == maxObsPerRow && !lastOffset)
+            {
+                offset = ((LengthDistance / 2) * (i + additionalPegsPerRow));
+                lastOffset = true;
+                finalOffset = offset;
+            }
+            if (lastOffset)
+            {
+                if (!alternateLeft)
+                {
+                    offset = finalOffset;
+                    amountOfObsPerRow = maxObsPerRow;
+
+                }
+                else
+                {
+                    offset = finalOffset - LengthDistance / 2;
+                    amountOfObsPerRow--;
+                }
+
+            }
+            for (int j = 1; j < amountOfObsPerRow + additionalPegsPerRow; j += 1)
             {
 
                 GameObject ObstacleLeft = Object.Instantiate(PrefabHolder.Instance.ObstacleNoRand, new Vector2(0, 0), Quaternion.identity);
                 ObstacleLeft.transform.position = new Vector2(sideDistance * LengthDistance - offset, -i * LengthDistance);
-                
-                
+
+
                 ObstacleLeft.transform.SetParent(obstacleHolder.transform, false);
 
                 //ObstacleLeft.transform.position = new Vector2(ObstacleLeft.transform.position.x + LengthDistance / 2, ObstacleLeft.transform.position.y);
-                if (i % 2 == 0)
-                {
-                   
-                   
-                }
+
+
                 obstacles.Add(ObstacleLeft);
- 
+
 
                 sideDistance += 1;
-                if (ObstacleRows == amountOfObsPerRow)
+
+
+                if (i == ObstacleRows)
                 {
                     bottomObs.Add(ObstacleLeft);
                 }
 
             }
+            if (amountOfObsPerRow < maxObsPerRow)
+                amountOfObsPerRow += 1;
+            else
+                rowsCounted++;
+            if (lastOffset)
+                alternateLeft = !alternateLeft;
 
-            amountOfObsPerRow += 1;
+
+
         }
-
+        AddPegPoints();
         SetupGoals();
+
     }
     public void Update()
     {
@@ -88,6 +128,77 @@ public class AltObstacleManager : MonoBehaviour
         foreach (var obstacle in obstacles)
         {
             obstacle.transform.localScale = new Vector2(obstacleScale, obstacleScale);
+        }
+        foreach (var pointPeg in pointPegs)
+        {
+            pointPeg.transform.localScale = new Vector2(obstacleScale / 2, obstacleScale / 2);
+        }
+
+    }
+    public void Start()
+    {
+
+    }
+    public void Awake()
+    {
+        maxObsPerRow = setMaxObsPerRow - additionalPegsPerRow;
+        additionalPegsPerRow += 1;
+    }
+
+    public void AddPegPoints()
+    {
+        int amountOfPegsPerRow = 0;
+
+        int rowCount = 0;
+        for (int i = 0; i < ObstacleRows; i++)
+        {
+
+            for (int j = 0; j < amountOfPegsPerRow + additionalPegsPerRow; j++)
+            {
+                int index = j + rowCount;
+
+                GameObject pointPeg = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                Vector2 pegPos = new Vector2(obstacles[index].transform.position.x + LengthDistance / 2, obstacles[index].transform.position.y);
+                pointPeg.transform.position = pegPos;
+                pointPeg.gameObject.transform.SetParent(pointPegHolder.transform);
+                pointPegs.Add(pointPeg);
+                if (morePegPoints)
+                {
+                    GameObject pointPeg2 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                    Vector2 pegPos2 = new Vector2(obstacles[index].transform.position.x + LengthDistance / 2, obstacles[index].transform.position.y - (LengthDistance / 2));
+                    pointPeg2.transform.position = pegPos2;
+                    pointPeg2.gameObject.transform.SetParent(pointPegHolder.transform);
+                    pointPegs.Add(pointPeg2);
+                    GameObject pointPeg3 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                    Vector2 pegPos3 = new Vector2(obstacles[index].transform.position.x, obstacles[index].transform.position.y - (LengthDistance / 2));
+                    pointPeg3.transform.position = pegPos3;
+                    pointPeg3.gameObject.transform.SetParent(pointPegHolder.transform);
+                    pointPegs.Add(pointPeg3);
+                    if (j + 1 == amountOfPegsPerRow - 1)
+                    {
+                        GameObject pointPeg4 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                        Vector2 pegPos4 = new Vector2(obstacles[index].transform.position.x + LengthDistance, obstacles[index].transform.position.y - (LengthDistance / 2));
+                        pointPeg4.transform.position = pegPos4;
+                        pointPeg4.gameObject.transform.SetParent(pointPegHolder.transform);
+                        pointPegs.Add(pointPeg4);
+                    }
+                    if (amountOfPegsPerRow == 2)
+                    {
+                        GameObject pointPeg5 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                        Vector2 pegPos5 = new Vector2(obstacles[0].transform.position.x, obstacles[0].transform.position.y - (LengthDistance / 2));
+                        pointPeg5.transform.position = pegPos5;
+                        pointPeg5.gameObject.transform.SetParent(pointPegHolder.transform);
+                        pointPegs.Add(pointPeg5);
+                    }
+                }
+
+
+
+            }
+            rowCount += amountOfPegsPerRow + additionalPegsPerRow - 1;
+            if (amountOfPegsPerRow < maxObsPerRow)
+                amountOfPegsPerRow += 1;
+
         }
 
     }
@@ -115,19 +226,19 @@ public class AltObstacleManager : MonoBehaviour
         for (int i = 0; i < bottomObs.Count; i++)
         {
             GameObject Goal = Object.Instantiate(PrefabHolder.Instance.goal, new Vector2(0, 0), Quaternion.identity);
-            Goal.gameObject.transform.position = new Vector2(bottomObs[i].transform.position.x - (LengthDistance/2), bottomObs[i].transform.position.y - 4);
-            Goal.gameObject.transform.SetParent(goal.transform);
+            Goal.gameObject.transform.position = new Vector2(bottomObs[i].transform.position.x - (LengthDistance / 2), bottomObs[i].transform.position.y - 2);
+            Goal.gameObject.transform.SetParent(goalHolder.transform);
             goals.Add(Goal);
             if (i == bottomObs.Count - 1)
             {
                 GameObject lastGoal = Object.Instantiate(PrefabHolder.Instance.goal, new Vector2(0, 0), Quaternion.identity);
-                lastGoal.gameObject.transform.position = new Vector2(bottomObs[i].transform.position.x + (LengthDistance / 2), bottomObs[i].transform.position.y - 4);
-                lastGoal.gameObject.transform.SetParent(goal.transform);
+                lastGoal.gameObject.transform.position = new Vector2(bottomObs[i].transform.position.x + (LengthDistance / 2), bottomObs[i].transform.position.y - 2);
+                lastGoal.gameObject.transform.SetParent(goalHolder.transform);
                 goals.Add(lastGoal);
             }
 
         }
-       
+
     }
     public void ChangeObstacleSpeed()
     {
