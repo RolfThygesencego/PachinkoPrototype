@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-[SerializeField]
+
 public class AltObstacleManager : MonoBehaviour
 {
     public List<GameObject> obstacles = new List<GameObject>();
@@ -15,17 +15,12 @@ public class AltObstacleManager : MonoBehaviour
     public List<GameObject> readyObstacles = new List<GameObject>();
     public List<GameObject> availableUpgrades = new List<GameObject>();
     public List<GameObject> tempUpgrades = new List<GameObject>();
+    public List<GameObject> rightObs = new List<GameObject>();
+    public bool Generated = false;
 
 
-    private bool Spinning = false;
-
-    private float SpinningSpeed = 0.1f;
     public float obSpeed;
-    [SerializeField]
-    private float minObDistance = 1f;
-    [SerializeField]
-    private float maxObDistance = 2f;
-    private int totalObstacles;
+
 
     public int ExtraBallPowerups = 10;
     public int AddToScorePowerups = 5;
@@ -46,6 +41,7 @@ public class AltObstacleManager : MonoBehaviour
     private bool lastOffset = false;
     private float finalOffset;
     private bool alternateLeft = false;
+    private bool addedToAdditionalPegs = false;
     public void SetupObstacles()
     {
         int amountOfObsPerRow = 1;
@@ -96,7 +92,10 @@ public class AltObstacleManager : MonoBehaviour
 
                 sideDistance += 1;
 
-
+                if (j + 1 == amountOfObsPerRow + additionalPegsPerRow)
+                {
+                    rightObs.Add(ObstacleLeft);
+                }
                 if (i == ObstacleRows)
                 {
                     bottomObs.Add(ObstacleLeft);
@@ -119,9 +118,21 @@ public class AltObstacleManager : MonoBehaviour
     }
     public void Update()
     {
-        ScaleObstacles();
-        ChangeObPositions();
-        ChangeObstacleSpeed();
+        if (!Generated)
+        {
+            maxObsPerRow = setMaxObsPerRow - additionalPegsPerRow;
+            if(!addedToAdditionalPegs)
+            additionalPegsPerRow += 1;
+            ClearObs();
+            SetupObstacles();
+            ScaleObstacles();
+            ChangeObstacleSpeed();
+            lastOffset = false;
+            alternateLeft = false;
+            addedToAdditionalPegs = true;
+            Generated = true;
+            
+        }
     }
     public void ScaleObstacles()
     {
@@ -137,89 +148,95 @@ public class AltObstacleManager : MonoBehaviour
     }
     public void Start()
     {
-
+        if (Generated)
+        {
+            foreach(GameObject goal in goals)
+            {
+                GameManager.Instance.Goals.Add(goal.GetComponent<Goal>());
+            }
+        }
     }
     public void Awake()
     {
-        maxObsPerRow = setMaxObsPerRow - additionalPegsPerRow;
-        additionalPegsPerRow += 1;
+        
     }
 
     public void AddPegPoints()
     {
         int amountOfPegsPerRow = 0;
 
-        int rowCount = 0;
-        for (int i = 0; i < ObstacleRows; i++)
+
+        for (int i = 0; i < obstacles.Count; i++)
         {
-
-            for (int j = 0; j < amountOfPegsPerRow + additionalPegsPerRow; j++)
+            if (!rightObs.Contains(obstacles[i]))
             {
-                int index = j + rowCount;
-
                 GameObject pointPeg = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
-                Vector2 pegPos = new Vector2(obstacles[index].transform.position.x + LengthDistance / 2, obstacles[index].transform.position.y);
+                Vector2 pegPos = new Vector2(obstacles[i].transform.position.x + LengthDistance / 2, obstacles[i].transform.position.y);
                 pointPeg.transform.position = pegPos;
                 pointPeg.gameObject.transform.SetParent(pointPegHolder.transform);
                 pointPegs.Add(pointPeg);
-                if (morePegPoints)
+            }
+                
+
+            
+            if (morePegPoints)
+            {
+                GameObject pointPeg2 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                Vector2 pegPos2 = new Vector2(obstacles[i].transform.position.x + LengthDistance / 2, obstacles[i].transform.position.y - (LengthDistance / 2));
+                pointPeg2.transform.position = pegPos2;
+                pointPeg2.gameObject.transform.SetParent(pointPegHolder.transform);
+                pointPegs.Add(pointPeg2);
+                GameObject pointPeg3 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                Vector2 pegPos3 = new Vector2(obstacles[i].transform.position.x, obstacles[i].transform.position.y - (LengthDistance / 2));
+                pointPeg3.transform.position = pegPos3;
+                pointPeg3.gameObject.transform.SetParent(pointPegHolder.transform);
+                pointPegs.Add(pointPeg3);
+                if (i + 1 == amountOfPegsPerRow - 1)
                 {
-                    GameObject pointPeg2 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
-                    Vector2 pegPos2 = new Vector2(obstacles[index].transform.position.x + LengthDistance / 2, obstacles[index].transform.position.y - (LengthDistance / 2));
-                    pointPeg2.transform.position = pegPos2;
-                    pointPeg2.gameObject.transform.SetParent(pointPegHolder.transform);
-                    pointPegs.Add(pointPeg2);
-                    GameObject pointPeg3 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
-                    Vector2 pegPos3 = new Vector2(obstacles[index].transform.position.x, obstacles[index].transform.position.y - (LengthDistance / 2));
-                    pointPeg3.transform.position = pegPos3;
-                    pointPeg3.gameObject.transform.SetParent(pointPegHolder.transform);
-                    pointPegs.Add(pointPeg3);
-                    if (j + 1 == amountOfPegsPerRow - 1)
-                    {
-                        GameObject pointPeg4 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
-                        Vector2 pegPos4 = new Vector2(obstacles[index].transform.position.x + LengthDistance, obstacles[index].transform.position.y - (LengthDistance / 2));
-                        pointPeg4.transform.position = pegPos4;
-                        pointPeg4.gameObject.transform.SetParent(pointPegHolder.transform);
-                        pointPegs.Add(pointPeg4);
-                    }
-                    if (amountOfPegsPerRow == 2)
-                    {
-                        GameObject pointPeg5 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
-                        Vector2 pegPos5 = new Vector2(obstacles[0].transform.position.x, obstacles[0].transform.position.y - (LengthDistance / 2));
-                        pointPeg5.transform.position = pegPos5;
-                        pointPeg5.gameObject.transform.SetParent(pointPegHolder.transform);
-                        pointPegs.Add(pointPeg5);
-                    }
+                    GameObject pointPeg4 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                    Vector2 pegPos4 = new Vector2(obstacles[i].transform.position.x + LengthDistance, obstacles[i].transform.position.y - (LengthDistance / 2));
+                    pointPeg4.transform.position = pegPos4;
+                    pointPeg4.gameObject.transform.SetParent(pointPegHolder.transform);
+                    pointPegs.Add(pointPeg4);
+                }
+                if (amountOfPegsPerRow == 2)
+                {
+                    GameObject pointPeg5 = Object.Instantiate(PrefabHolder.Instance.pegPoint, new Vector2(0, 0), Quaternion.identity);
+                    Vector2 pegPos5 = new Vector2(obstacles[0].transform.position.x, obstacles[0].transform.position.y - (LengthDistance / 2));
+                    pointPeg5.transform.position = pegPos5;
+                    pointPeg5.gameObject.transform.SetParent(pointPegHolder.transform);
+                    pointPegs.Add(pointPeg5);
                 }
 
-
-
             }
-            rowCount += amountOfPegsPerRow + additionalPegsPerRow - 1;
-            if (amountOfPegsPerRow < maxObsPerRow)
-                amountOfPegsPerRow += 1;
 
         }
 
     }
-    public void ChangeObPositions()
+    public void ClearObs()
     {
-        if (LengthDistance == oldLengthDistance) return;
-        else
+
+
+
+        foreach (GameObject obstacle in obstacles)
         {
-            foreach (GameObject obstacle in obstacles)
-            {
-                Destroy(obstacle);
-            }
-            obstacles.Clear();
-            foreach (GameObject goal in goals)
-            {
-                Destroy(goal);
-            }
-            obstacles.Clear();
-            SetupObstacles();
-            oldLengthDistance = LengthDistance;
+            Destroy(obstacle);
         }
+        obstacles.Clear();
+        bottomObs.Clear();
+        rightObs.Clear();
+        foreach (GameObject goal in goals)
+        {
+            Destroy(goal);
+        }
+        goals.Clear();
+        GameManager.Instance.Goals.Clear();
+        foreach (GameObject peg in pointPegs)
+        {
+            Destroy(peg);
+        }
+        pointPegs.Clear();
+       
     }
     public void SetupGoals()
     {

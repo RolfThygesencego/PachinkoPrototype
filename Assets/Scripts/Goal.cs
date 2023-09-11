@@ -50,12 +50,15 @@ public class Goal : MonoBehaviour
             {
                 GameManager.Instance.Ballsdropping.ballsFinished += 1;
                 GameManager.Instance.AddToScore(Score);
+                timesScored++;
+                if (!GameManager.Instance.GoalAddToScore)
+                    return;
                 Score += (Score / 10);
                 if (Score / 10 < 1 && Score != 0)
                     Score += 1;
 
                 ball.ballScoreAdded = true;
-                timesScored++;
+                
 
                 GameManager.Instance.Ballsdropping.ReadyForNextBall = true;
                 //if(GameManager.Instance.gmode == GMode.TEN_BALL)

@@ -55,9 +55,9 @@ MonoBehaviour:
   readyObstacles: []
   availableUpgrades: []
   tempUpgrades: []
+  rightObs: []
+  Generated: 0
   obSpeed: 0.18
-  minObDistance: 1
-  maxObDistance: 2
   ExtraBallPowerups: 10
   AddToScorePowerups: 5
   BounceHighPowerups: 5
@@ -65,12 +65,13 @@ MonoBehaviour:
   heightVariation: 0.7
   LengthDistance: 0.95
   oldLengthDistance: 1.15
-  ObstacleRows: 10
+  ObstacleRows: 12
   obstacleHolder: {fileID: 3197445546949503415}
   goalHolder: {fileID: 3429000047706131700}
   pointPegHolder: {fileID: 4633940981507084756}
   morePegPoints: 1
   additionalPegsPerRow: 3
+  setMaxObsPerRow: 6
 --- !u!1 &3197445546949503415
 GameObject:
   m_ObjectHideFlags: 0

@@ -165,3 +165,4 @@ MonoBehaviour:
   toBeRemoved: 0
   Falling: 0
   speed: 0.08
+  Loaded: 0

@@ -8,6 +8,7 @@ public class BallNoRand : MonoBehaviour
     public bool toBeRemoved = false;
     public bool Falling = true;
     public float speed = 0.08f;
+    public bool Loaded = false;
     public void Awake()
     {
         

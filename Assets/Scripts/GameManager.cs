@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -16,6 +17,8 @@ public class GameManager : MonoBehaviour
     public UnityEvent reelFinished = new UnityEvent();
     public Ballsdropping Ballsdropping = new Ballsdropping();
     public Spinning Spinning = new Spinning();
+    public PreBallDrop PreBallDrop = new PreBallDrop();
+    public ShootingBalls ShootingBalls = new ShootingBalls();
     public ReadyForSpin ReadyForSpin = new ReadyForSpin();
     public TextMeshProUGUI scoreTally;
     public TextMeshProUGUI BallTally;
@@ -28,6 +31,9 @@ public class GameManager : MonoBehaviour
     private int Score;
     public int pegsHit = 0;
 
+    public BallHolder leftBallHolder;
+    public BallHolder rightBallHolder;
+
     public State CurrentState;
     public CSVWriter CSVWriter = new CSVWriter();
     public GameMode CurrentGameMode;
@@ -37,7 +43,8 @@ public class GameManager : MonoBehaviour
 
     public bool changeReelDistance;
     public float obDistance;
-
+    public bool GoalAddToScore = false;
+    public bool PegAddToScore = false;
     public bool DeleteObOnHit;
     public AltObstacleManager AltObstacleManager;
 
@@ -74,7 +81,7 @@ public class GameManager : MonoBehaviour
     }
     public void Update()
     {
-        //Debug.Log(CurrentState.ToString());
+        Debug.Log(CurrentState.ToString());
         CurrentState.Execute();
         scoreTally.text = $"{Score}";
         ScoreStreakTally.text = $"{scoreStreak}X";
@@ -99,13 +106,15 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == ReadyForSpin)
         {
-            ChangeState(Spinning);
-            Score -= 100 * Spinning.ballWager;
+            ChangeState(PreBallDrop);
+            Score -= 100 * ballWagerAmount;
         }
     }
 
     public void AddToScore(int scoreAddition)
     {
+        
+
         Score += scoreAddition;
         scoreStreak+= 1;
         if (scoreStreak > maxScoreStreak)
@@ -123,18 +132,18 @@ public class GameManager : MonoBehaviour
                 goal.Score = goal.BaseScore;
                 
             }
-            foreach (SpinningReel reel in Reels)
-            {
-                reel.obstacleManager.RefreshUpgrades();
-            }
+
         }
     }
 
     public void UpgradeAddToScore()
     {
         
+
         scoreStreak += 1;
         ScoreMultiplier += ScoreMultiplier / 10;
+        if (!PegAddToScore)
+            return;
         foreach (Goal goal in Goals)
         {
             
@@ -151,15 +160,12 @@ public class GameManager : MonoBehaviour
 
     public void IncreaseWager()
     {
-        if (Spinning.ballWager < 100 && CurrentState == ReadyForSpin)
-            Spinning.ballWager += ballWagerAmount;
+        ballWagerAmount++;
     }
     public void DecreaseWager()
     {
-        if (Spinning.ballWager > 1 && CurrentState == ReadyForSpin)
-            Spinning.ballWager -= ballWagerAmount;
-        if (Spinning.ballWager < 1)
-            Spinning.ballWager = 1;
+        if (ballWagerAmount > 1)
+        ballWagerAmount--;
     }
 
     void ChangeRules(GameMode gameMode)
