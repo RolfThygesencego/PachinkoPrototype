@@ -149,8 +149,12 @@ public class GameManager : MonoBehaviour
 
     public void IncreaseWager()
     {
+<<<<<<< Updated upstream
         if (Spinning.ballWager < 100 && CurrentState == ReadyForSpin)
             Spinning.ballWager += ballWagerAmount;
+=======
+        leftBallHolder.AddBall();   
+>>>>>>> Stashed changes
     }
     public void DecreaseWager()
     {

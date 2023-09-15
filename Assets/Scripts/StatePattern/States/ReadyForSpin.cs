@@ -24,6 +24,13 @@ public class ReadyForSpin : State
         GameManager.Instance.pegsHit = 0;
         GameManager.Instance.Streaks.Clear();
         GameManager.Instance.maxScoreStreak = 0;
+<<<<<<< Updated upstream
+=======
+        GameManager.Instance.leftBallHolder.FinishedBalls = false;
+
+        GameManager.Instance.leftBallHolder.BallIndex = 0;
+
+>>>>>>> Stashed changes
     }
     void RemoveTempUpgrades()
     {
